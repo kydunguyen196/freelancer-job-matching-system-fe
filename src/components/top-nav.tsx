@@ -8,12 +8,15 @@ import { useAuth } from "@/components/providers/auth-provider";
 const links = [
   { href: "/jobs", label: "Jobs" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { session, logout } = useAuth();
+  const roleLabel = session?.role ?? "ACCOUNT";
+  const emailLabel = session?.email ?? "Signed in user";
 
   const handleLogout = () => {
     logout();
@@ -40,8 +43,8 @@ export function TopNav() {
         </nav>
 
         <div className="top-nav-user">
-          <span className="pill">{session?.role}</span>
-          <div className="user-email">{session?.email}</div>
+          <span className="pill">{roleLabel}</span>
+          <div className="user-email">{emailLabel}</div>
           <button type="button" className="btn-danger" onClick={handleLogout}>
             Sign out
           </button>

@@ -8,6 +8,7 @@ import { createJob, listJobs } from "@/lib/api";
 import { formatDate, formatMoney } from "@/lib/format";
 import { ApiError } from "@/lib/http-client";
 import type { CreateJobRequest, JobResponse } from "@/lib/types";
+import { pickApiFieldErrors, toCreateJobPayload, type CreateJobFields, validateCreateJobInput } from "@/lib/validation";
 
 type CreateJobForm = {
   title: string;
@@ -38,6 +39,7 @@ export default function JobsPage() {
   const [creatingJob, setCreatingJob] = useState(false);
   const [createJobError, setCreateJobError] = useState<string | null>(null);
   const [createJobSuccess, setCreateJobSuccess] = useState<string | null>(null);
+  const [createFieldErrors, setCreateFieldErrors] = useState<Partial<Record<CreateJobFields, string>>>({});
 
   const isClient = session?.role === "CLIENT";
 
@@ -64,28 +66,36 @@ export default function JobsPage() {
 
   const handleCreateJob = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setCreatingJob(true);
-    setCreateJobError(null);
     setCreateJobSuccess(null);
+    setCreateJobError(null);
 
-    const payload: CreateJobRequest = {
-      title: createForm.title.trim(),
-      description: createForm.description.trim(),
-      budgetMin: Number(createForm.budgetMin),
-      budgetMax: Number(createForm.budgetMax),
-      tags: createForm.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean),
-    };
+    const validation = validateCreateJobInput(createForm);
+    if (!validation.ok) {
+      setCreateFieldErrors(validation.fieldErrors);
+      setCreateJobError("Please fix the highlighted fields.");
+      return;
+    }
+
+    setCreatingJob(true);
+    setCreateFieldErrors({});
+
+    const payload: CreateJobRequest = toCreateJobPayload(createForm);
 
     try {
       await createJob(payload);
       setCreateJobSuccess("Job created successfully.");
       setCreateForm(emptyCreateJobForm);
+      setCreateFieldErrors({});
       await refreshJobs();
     } catch (error) {
       if (error instanceof ApiError) {
+        const apiFieldErrors = pickApiFieldErrors<CreateJobFields>(
+          error.fieldErrors,
+          ["title", "description", "budgetMin", "budgetMax", "tags"]
+        );
+        if (Object.keys(apiFieldErrors).length > 0) {
+          setCreateFieldErrors(apiFieldErrors);
+        }
         setCreateJobError(error.message);
       } else {
         setCreateJobError("Could not create job.");
@@ -109,6 +119,7 @@ export default function JobsPage() {
             value={keyword}
             onChange={(event) => setKeyword(event.target.value)}
             placeholder="Search by keyword"
+            maxLength={120}
           />
           <select className="select-field" style={{ maxWidth: 170 }} value={status} onChange={(event) => setStatus(event.target.value)}>
             <option value="">All statuses</option>
@@ -130,21 +141,21 @@ export default function JobsPage() {
             {jobs.map((job) => (
               <article key={job.id} className="job-item">
                 <h3>{job.title}</h3>
-                <p style={{ color: "var(--muted)", marginBottom: "0.35rem" }}>{job.description.slice(0, 180)}</p>
+                <p className="muted-text mb-sm">{job.description.slice(0, 180)}</p>
                 <div className="row-actions">
                   <span className="pill">{job.status}</span>
                   <span>{formatMoney(job.budgetMin)} - {formatMoney(job.budgetMax)}</span>
-                  <span style={{ color: "var(--muted)" }}>Updated {formatDate(job.updatedAt)}</span>
+                  <span className="muted-text">Updated {formatDate(job.updatedAt)}</span>
                 </div>
-                <div className="row-actions" style={{ marginTop: "0.55rem" }}>
+                <div className="row-actions mt-sm">
                   <Link className="btn-primary" href={`/jobs/${job.id}`}>
                     View details
                   </Link>
-                  {job.tags?.length ? <span style={{ color: "var(--muted)" }}>Tags: {job.tags.join(", ")}</span> : null}
+                  {job.tags?.length ? <span className="muted-text">Tags: {job.tags.join(", ")}</span> : null}
                 </div>
               </article>
             ))}
-            {!jobs.length && !loadingJobs ? <p style={{ color: "var(--muted)" }}>No jobs found with current filter.</p> : null}
+            {!jobs.length && !loadingJobs ? <p className="muted-text">No jobs found with current filter.</p> : null}
           </div>
         </section>
 
@@ -157,20 +168,34 @@ export default function JobsPage() {
                 <input
                   className="input-field"
                   value={createForm.title}
-                  onChange={(event) => setCreateForm((prev) => ({ ...prev, title: event.target.value }))}
+                  onChange={(event) => {
+                    setCreateForm((prev) => ({ ...prev, title: event.target.value }));
+                    setCreateJobError(null);
+                    setCreateFieldErrors((prev) => ({ ...prev, title: undefined }));
+                  }}
+                  minLength={6}
                   maxLength={150}
+                  aria-invalid={Boolean(createFieldErrors.title)}
                   required
                 />
+                {createFieldErrors.title ? <p className="error-text">{createFieldErrors.title}</p> : null}
               </label>
               <label>
                 <div className="field-label">Description</div>
                 <textarea
                   className="textarea-field"
                   value={createForm.description}
-                  onChange={(event) => setCreateForm((prev) => ({ ...prev, description: event.target.value }))}
+                  onChange={(event) => {
+                    setCreateForm((prev) => ({ ...prev, description: event.target.value }));
+                    setCreateJobError(null);
+                    setCreateFieldErrors((prev) => ({ ...prev, description: undefined }));
+                  }}
+                  minLength={24}
                   maxLength={4000}
+                  aria-invalid={Boolean(createFieldErrors.description)}
                   required
                 />
+                {createFieldErrors.description ? <p className="error-text">{createFieldErrors.description}</p> : null}
               </label>
               <div className="row-actions">
                 <label style={{ flex: 1 }}>
@@ -181,9 +206,16 @@ export default function JobsPage() {
                     min="1"
                     step="0.01"
                     value={createForm.budgetMin}
-                    onChange={(event) => setCreateForm((prev) => ({ ...prev, budgetMin: event.target.value }))}
+                    onChange={(event) => {
+                      setCreateForm((prev) => ({ ...prev, budgetMin: event.target.value }));
+                      setCreateJobError(null);
+                      setCreateFieldErrors((prev) => ({ ...prev, budgetMin: undefined }));
+                    }}
+                    inputMode="decimal"
+                    aria-invalid={Boolean(createFieldErrors.budgetMin)}
                     required
                   />
+                  {createFieldErrors.budgetMin ? <p className="error-text">{createFieldErrors.budgetMin}</p> : null}
                 </label>
                 <label style={{ flex: 1 }}>
                   <div className="field-label">Budget Max</div>
@@ -193,9 +225,16 @@ export default function JobsPage() {
                     min="1"
                     step="0.01"
                     value={createForm.budgetMax}
-                    onChange={(event) => setCreateForm((prev) => ({ ...prev, budgetMax: event.target.value }))}
+                    onChange={(event) => {
+                      setCreateForm((prev) => ({ ...prev, budgetMax: event.target.value }));
+                      setCreateJobError(null);
+                      setCreateFieldErrors((prev) => ({ ...prev, budgetMax: undefined }));
+                    }}
+                    inputMode="decimal"
+                    aria-invalid={Boolean(createFieldErrors.budgetMax)}
                     required
                   />
+                  {createFieldErrors.budgetMax ? <p className="error-text">{createFieldErrors.budgetMax}</p> : null}
                 </label>
               </div>
               <label>
@@ -203,9 +242,15 @@ export default function JobsPage() {
                 <input
                   className="input-field"
                   value={createForm.tags}
-                  onChange={(event) => setCreateForm((prev) => ({ ...prev, tags: event.target.value }))}
+                  onChange={(event) => {
+                    setCreateForm((prev) => ({ ...prev, tags: event.target.value }));
+                    setCreateJobError(null);
+                    setCreateFieldErrors((prev) => ({ ...prev, tags: undefined }));
+                  }}
+                  maxLength={220}
                   placeholder="java, spring, api"
                 />
+                {createFieldErrors.tags ? <p className="error-text">{createFieldErrors.tags}</p> : null}
               </label>
               <button className="btn-primary" type="submit" disabled={creatingJob}>
                 {creatingJob ? "Creating..." : "Create job"}
@@ -217,11 +262,11 @@ export default function JobsPage() {
         ) : (
           <section className="surface-card">
             <h2 className="section-title">Freelancer Tip</h2>
-            <p style={{ color: "var(--muted)" }}>
+            <p className="muted-text">
               Open a job to send your proposal with price and duration. Accepted proposals automatically create
               contracts and default milestones.
             </p>
-            <div className="row-actions" style={{ marginTop: "0.8rem" }}>
+            <div className="row-actions mt-sm">
               <Link href="/dashboard/freelancer" className="btn-secondary">
                 Go to freelancer dashboard
               </Link>

@@ -16,6 +16,7 @@ export default function FreelancerDashboardPage() {
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [markingNotificationId, setMarkingNotificationId] = useState<number | null>(null);
 
   const refreshDashboard = useCallback(async () => {
     setLoading(true);
@@ -42,6 +43,8 @@ export default function FreelancerDashboardPage() {
   const unreadCount = useMemo(() => notifications.filter((item) => !item.read).length, [notifications]);
 
   const handleMarkAsRead = async (notificationId: number) => {
+    setMarkingNotificationId(notificationId);
+    setErrorMessage(null);
     try {
       await markNotificationRead(notificationId);
       await refreshDashboard();
@@ -51,6 +54,8 @@ export default function FreelancerDashboardPage() {
       } else {
         setErrorMessage("Could not mark notification as read.");
       }
+    } finally {
+      setMarkingNotificationId(null);
     }
   };
 
@@ -83,26 +88,26 @@ export default function FreelancerDashboardPage() {
           <div className="job-list">
             {contracts.map((contract) => (
               <article key={contract.id} className="job-item">
-                <div className="row-actions" style={{ justifyContent: "space-between" }}>
+                <div className="row-actions row-between">
                   <strong>Contract #{contract.id}</strong>
                   <span className="pill">{contract.status}</span>
                 </div>
-                <p style={{ color: "var(--muted)" }}>Job #{contract.jobId}</p>
-                <p style={{ color: "var(--muted)", marginBottom: "0.35rem" }}>Updated: {formatDate(contract.updatedAt)}</p>
+                <p className="muted-text">Job #{contract.jobId}</p>
+                <p className="muted-text mb-sm">Updated: {formatDate(contract.updatedAt)}</p>
                 {contract.milestones?.length ? (
-                  <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                  <ul className="list-compact">
                     {contract.milestones.map((milestone) => (
-                      <li key={milestone.id} style={{ marginBottom: "0.35rem" }}>
+                      <li key={milestone.id}>
                         {milestone.title} - {formatMoney(milestone.amount)} ({milestone.status})
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p style={{ color: "var(--muted)" }}>No milestones yet.</p>
+                  <p className="muted-text">No milestones yet.</p>
                 )}
               </article>
             ))}
-            {!contracts.length ? <p style={{ color: "var(--muted)" }}>No contracts available.</p> : null}
+            {!contracts.length ? <p className="muted-text">No contracts available.</p> : null}
           </div>
         </section>
 
@@ -111,16 +116,21 @@ export default function FreelancerDashboardPage() {
           <div className="job-list">
             {notifications.map((notification) => (
               <article key={notification.id} className="job-item">
-                <div className="row-actions" style={{ justifyContent: "space-between" }}>
+                <div className="row-actions row-between">
                   <strong>{notification.title}</strong>
                   <span className="pill">{notification.type}</span>
                 </div>
-                <p style={{ margin: "0.35rem 0", color: "var(--muted)" }}>{notification.message}</p>
+                <p className="muted-text mb-sm">{notification.message}</p>
                 <div className="row-actions">
-                  <span style={{ color: "var(--muted)" }}>Created: {formatDate(notification.createdAt)}</span>
+                  <span className="muted-text">Created: {formatDate(notification.createdAt)}</span>
                   {!notification.read ? (
-                    <button type="button" className="btn-secondary" onClick={() => void handleMarkAsRead(notification.id)}>
-                      Mark as read
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => void handleMarkAsRead(notification.id)}
+                      disabled={markingNotificationId !== null}
+                    >
+                      {markingNotificationId === notification.id ? "Updating..." : "Mark as read"}
                     </button>
                   ) : (
                     <span className="pill">Read</span>
@@ -128,7 +138,7 @@ export default function FreelancerDashboardPage() {
                 </div>
               </article>
             ))}
-            {!notifications.length ? <p style={{ color: "var(--muted)" }}>No notifications yet.</p> : null}
+            {!notifications.length ? <p className="muted-text">No notifications yet.</p> : null}
           </div>
         </section>
       </div>

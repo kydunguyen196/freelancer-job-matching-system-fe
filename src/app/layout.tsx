@@ -1,23 +1,22 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Sora } from "next/font/google";
+import { Manrope, Space_Grotesk } from "next/font/google";
 
 import { AppProviders } from "@/components/providers/app-providers";
 import "./globals.css";
 
-const sora = Sora({
-  variable: "--font-sora",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "SkillBridge Frontend",
-  description: "Freelance marketplace frontend for SkillBridge",
+  title: "SkillBridge | Freelancer Job Matching",
+  description: "Modern freelance marketplace frontend for SkillBridge demos and production flows.",
 };
 
 export default function RootLayout({
@@ -27,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sora.variable} ${plexMono.variable} antialiased`}>
+      <body className={`${manrope.variable} ${spaceGrotesk.variable} antialiased`}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

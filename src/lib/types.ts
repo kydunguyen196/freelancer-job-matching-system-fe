@@ -34,6 +34,32 @@ export interface RegisterRequest {
   role: UserRole;
 }
 
+export interface UserProfileResponse {
+  userId: number;
+  email: string;
+  role: UserRole;
+  skills: string[];
+  hourlyRate: number | null;
+  overview: string | null;
+  companyName: string | null;
+  contactEmail: string | null;
+  phoneNumber: string | null;
+  address: string | null;
+  companyAddress: string | null;
+  resumeFileName: string | null;
+}
+
+export interface UpdateProfileRequest {
+  skills?: string[] | null;
+  hourlyRate?: number | null;
+  overview?: string | null;
+  companyName?: string | null;
+  contactEmail?: string | null;
+  phoneNumber?: string | null;
+  address?: string | null;
+  companyAddress?: string | null;
+}
+
 export interface CreateJobRequest {
   title: string;
   description: string;

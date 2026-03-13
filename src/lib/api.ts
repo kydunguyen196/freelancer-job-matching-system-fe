@@ -9,6 +9,8 @@ import type {
   NotificationResponse,
   ProposalResponse,
   RegisterRequest,
+  UpdateProfileRequest,
+  UserProfileResponse,
 } from "@/lib/types";
 
 function toQueryString(params: Record<string, string | number | undefined>) {
@@ -34,6 +36,30 @@ export function register(payload: RegisterRequest) {
   return apiRequest<AuthResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+export function getMyProfile() {
+  return apiRequest<UserProfileResponse>("/users/me", {
+    auth: true,
+  });
+}
+
+export function updateMyProfile(payload: UpdateProfileRequest) {
+  return apiRequest<UserProfileResponse>("/users/me", {
+    method: "PUT",
+    auth: true,
+    body: JSON.stringify(payload),
+  });
+}
+
+export function uploadMyResume(file: File) {
+  const formData = new FormData();
+  formData.set("file", file);
+  return apiRequest<UserProfileResponse>("/users/me/cv", {
+    method: "POST",
+    auth: true,
+    body: formData,
   });
 }
 

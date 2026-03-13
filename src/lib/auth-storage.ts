@@ -32,7 +32,11 @@ export function getAuthSession(): AuthSession | null {
 
   try {
     const parsed = JSON.parse(raw) as AuthSession;
-    if (!parsed?.accessToken || !parsed?.refreshToken || !parsed?.role) {
+    if (!parsed?.accessToken || !parsed?.refreshToken || !parsed?.role || !Number.isFinite(parsed?.expiresAt)) {
+      clearAuthSession();
+      return null;
+    }
+    if (isSessionExpired(parsed)) {
       clearAuthSession();
       return null;
     }

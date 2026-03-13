@@ -46,6 +46,19 @@ Default backend gateway URL is `http://localhost:8080` via `NEXT_PUBLIC_API_BASE
 5. Client can review proposals and accept from dashboard.
 6. Freelancer can view contracts + notifications and mark notifications as read.
 
+## Demo (Tạm Thời - Tiếng Việt)
+
+Đã thay phần demo cũ bằng tài liệu demo chi tiết mới (có giải thích logic code FE/BE):
+
+- `DEMO_RECRUITER_FE_VI.md`
+
+Nội dung trong tài liệu demo mới gồm:
+
+1. Luồng demo 12-15 phút theo từng bước thao tác.
+2. Giải thích search/filter job `OPEN`/`CLOSED` đang dựa trên query nào.
+3. Cách chuyển job sang `CLOSED` bằng API `PATCH /jobs/{jobId}/close`.
+4. Tổng hợp toàn bộ chức năng hiện có và rule theo role.
+
 ## Quality Checks
 
 ```bash

@@ -9,6 +9,7 @@ import { createProposal, getJobById } from "@/lib/api";
 import { formatDate, formatMoney } from "@/lib/format";
 import { ApiError } from "@/lib/http-client";
 import type { JobResponse } from "@/lib/types";
+import { pickApiFieldErrors, type ProposalFields, validateProposalInput } from "@/lib/validation";
 
 type ProposalFormState = {
   coverLetter: string;
@@ -38,6 +39,7 @@ export default function JobDetailPage() {
   const [applying, setApplying] = useState(false);
   const [applyError, setApplyError] = useState<string | null>(null);
   const [applySuccess, setApplySuccess] = useState<string | null>(null);
+  const [applyFieldErrors, setApplyFieldErrors] = useState<Partial<Record<ProposalFields, string>>>({});
 
   useEffect(() => {
     if (!Number.isFinite(jobId) || jobId < 1) {
@@ -78,9 +80,19 @@ export default function JobDetailPage() {
     if (!job) {
       return;
     }
-    setApplying(true);
-    setApplyError(null);
+
     setApplySuccess(null);
+    setApplyError(null);
+
+    const validation = validateProposalInput(proposalForm);
+    if (!validation.ok) {
+      setApplyFieldErrors(validation.fieldErrors);
+      setApplyError("Please fix the highlighted fields.");
+      return;
+    }
+
+    setApplying(true);
+    setApplyFieldErrors({});
     try {
       await createProposal({
         jobId: job.id,
@@ -90,8 +102,16 @@ export default function JobDetailPage() {
       });
       setApplySuccess("Proposal submitted.");
       setProposalForm(defaultProposalForm);
+      setApplyFieldErrors({});
     } catch (error) {
       if (error instanceof ApiError) {
+        const apiFieldErrors = pickApiFieldErrors<ProposalFields>(
+          error.fieldErrors,
+          ["coverLetter", "price", "durationDays"]
+        );
+        if (Object.keys(apiFieldErrors).length > 0) {
+          setApplyFieldErrors(apiFieldErrors);
+        }
         setApplyError(error.message);
       } else {
         setApplyError("Could not submit proposal.");
@@ -124,8 +144,8 @@ export default function JobDetailPage() {
   return (
     <div className="split-2">
       <section className="surface-card">
-        <div className="row-actions" style={{ justifyContent: "space-between", marginBottom: "0.5rem" }}>
-          <h1 className="section-title" style={{ marginBottom: 0 }}>
+        <div className="row-actions row-between mb-sm">
+          <h1 className="section-title mb-0">
             {job.title}
           </h1>
           <span className="pill">{job.status}</span>
@@ -165,10 +185,17 @@ export default function JobDetailPage() {
               <textarea
                 className="textarea-field"
                 value={proposalForm.coverLetter}
-                onChange={(event) => setProposalForm((prev) => ({ ...prev, coverLetter: event.target.value }))}
+                onChange={(event) => {
+                  setProposalForm((prev) => ({ ...prev, coverLetter: event.target.value }));
+                  setApplyError(null);
+                  setApplyFieldErrors((prev) => ({ ...prev, coverLetter: undefined }));
+                }}
+                minLength={40}
                 maxLength={4000}
+                aria-invalid={Boolean(applyFieldErrors.coverLetter)}
                 required
               />
+              {applyFieldErrors.coverLetter ? <p className="error-text">{applyFieldErrors.coverLetter}</p> : null}
             </label>
             <div className="row-actions">
               <label style={{ flex: 1 }}>
@@ -179,9 +206,16 @@ export default function JobDetailPage() {
                   min="1"
                   step="0.01"
                   value={proposalForm.price}
-                  onChange={(event) => setProposalForm((prev) => ({ ...prev, price: event.target.value }))}
+                  onChange={(event) => {
+                    setProposalForm((prev) => ({ ...prev, price: event.target.value }));
+                    setApplyError(null);
+                    setApplyFieldErrors((prev) => ({ ...prev, price: undefined }));
+                  }}
+                  inputMode="decimal"
+                  aria-invalid={Boolean(applyFieldErrors.price)}
                   required
                 />
+                {applyFieldErrors.price ? <p className="error-text">{applyFieldErrors.price}</p> : null}
               </label>
               <label style={{ flex: 1 }}>
                 <div className="field-label">Duration (days)</div>
@@ -189,10 +223,18 @@ export default function JobDetailPage() {
                   className="input-field"
                   type="number"
                   min="1"
+                  max="365"
                   value={proposalForm.durationDays}
-                  onChange={(event) => setProposalForm((prev) => ({ ...prev, durationDays: event.target.value }))}
+                  onChange={(event) => {
+                    setProposalForm((prev) => ({ ...prev, durationDays: event.target.value }));
+                    setApplyError(null);
+                    setApplyFieldErrors((prev) => ({ ...prev, durationDays: undefined }));
+                  }}
+                  inputMode="numeric"
+                  aria-invalid={Boolean(applyFieldErrors.durationDays)}
                   required
                 />
+                {applyFieldErrors.durationDays ? <p className="error-text">{applyFieldErrors.durationDays}</p> : null}
               </label>
             </div>
             <button className="btn-primary" type="submit" disabled={applying}>
@@ -205,7 +247,7 @@ export default function JobDetailPage() {
       ) : (
         <section className="surface-card">
           <h2 className="section-title">Proposal panel</h2>
-          <p style={{ color: "var(--muted)" }}>
+          <p className="muted-text">
             {job.status !== "OPEN"
               ? "This job is closed, so new proposals are disabled."
               : "Only freelancer accounts can apply to jobs."}

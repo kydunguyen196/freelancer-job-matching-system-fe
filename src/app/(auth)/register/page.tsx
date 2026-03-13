@@ -7,6 +7,7 @@ import { FormEvent, useState } from "react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ApiError } from "@/lib/http-client";
 import type { UserRole } from "@/lib/types";
+import { pickApiFieldErrors, type RegisterFields, validateRegisterInput } from "@/lib/validation";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,20 +15,35 @@ export default function RegisterPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<UserRole>("FREELANCER");
   const [pending, setPending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<RegisterFields, string>>>({});
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const payload = { email: email.trim(), password, confirmPassword, role };
+    const validation = validateRegisterInput(payload);
+    if (!validation.ok) {
+      setFieldErrors(validation.fieldErrors);
+      setErrorMessage("Please fix the highlighted fields.");
+      return;
+    }
+
     setPending(true);
     setErrorMessage(null);
+    setFieldErrors({});
 
     try {
-      await registerAccount({ email: email.trim(), password, role });
+      await registerAccount({ email: payload.email, password: payload.password, role });
       router.replace("/jobs");
     } catch (error) {
       if (error instanceof ApiError) {
+        const apiFieldErrors = pickApiFieldErrors<RegisterFields>(error.fieldErrors, ["email", "password", "role"]);
+        if (Object.keys(apiFieldErrors).length > 0) {
+          setFieldErrors(apiFieldErrors);
+        }
         setErrorMessage(error.message);
       } else {
         setErrorMessage("Unable to register right now.");
@@ -50,10 +66,18 @@ export default function RegisterPage() {
               className="input-field"
               type="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                setErrorMessage(null);
+                setFieldErrors((prev) => ({ ...prev, email: undefined }));
+              }}
               placeholder="you@example.com"
+              autoComplete="email"
+              maxLength={254}
+              aria-invalid={Boolean(fieldErrors.email)}
               required
             />
+            {fieldErrors.email ? <p className="error-text">{fieldErrors.email}</p> : null}
           </label>
 
           <label>
@@ -63,10 +87,37 @@ export default function RegisterPage() {
               type="password"
               value={password}
               minLength={8}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 8 characters"
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setErrorMessage(null);
+                setFieldErrors((prev) => ({ ...prev, password: undefined }));
+              }}
+              placeholder="At least 8 chars, letters + numbers"
+              autoComplete="new-password"
+              aria-invalid={Boolean(fieldErrors.password)}
               required
             />
+            {fieldErrors.password ? <p className="error-text">{fieldErrors.password}</p> : null}
+          </label>
+
+          <label>
+            <div className="field-label">Confirm password</div>
+            <input
+              className="input-field"
+              type="password"
+              value={confirmPassword}
+              minLength={8}
+              onChange={(event) => {
+                setConfirmPassword(event.target.value);
+                setErrorMessage(null);
+                setFieldErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+              }}
+              placeholder="Re-enter your password"
+              autoComplete="new-password"
+              aria-invalid={Boolean(fieldErrors.confirmPassword)}
+              required
+            />
+            {fieldErrors.confirmPassword ? <p className="error-text">{fieldErrors.confirmPassword}</p> : null}
           </label>
 
           <label>
@@ -74,11 +125,17 @@ export default function RegisterPage() {
             <select
               className="select-field"
               value={role}
-              onChange={(event) => setRole(event.target.value as UserRole)}
+              onChange={(event) => {
+                setRole(event.target.value as UserRole);
+                setErrorMessage(null);
+                setFieldErrors((prev) => ({ ...prev, role: undefined }));
+              }}
+              aria-invalid={Boolean(fieldErrors.role)}
             >
               <option value="FREELANCER">Freelancer</option>
               <option value="CLIENT">Client</option>
             </select>
+            {fieldErrors.role ? <p className="error-text">{fieldErrors.role}</p> : null}
           </label>
 
           <button className="btn-primary" type="submit" disabled={pending}>

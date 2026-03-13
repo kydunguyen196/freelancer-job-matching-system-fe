@@ -20,6 +20,7 @@ export default function ClientDashboardPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [acceptingProposalId, setAcceptingProposalId] = useState<number | null>(null);
 
   const refreshOverview = useCallback(async () => {
     if (!session?.userId) {
@@ -76,6 +77,8 @@ export default function ClientDashboardPage() {
 
   const handleAcceptProposal = async (proposalId: number) => {
     setActionMessage(null);
+    setErrorMessage(null);
+    setAcceptingProposalId(proposalId);
     try {
       await acceptProposal(proposalId);
       setActionMessage("Proposal accepted. Contract created.");
@@ -86,6 +89,8 @@ export default function ClientDashboardPage() {
       } else {
         setErrorMessage("Could not accept proposal.");
       }
+    } finally {
+      setAcceptingProposalId(null);
     }
   };
 
@@ -121,11 +126,7 @@ export default function ClientDashboardPage() {
               <button
                 key={job.id}
                 type="button"
-                className="job-item"
-                style={{
-                  textAlign: "left",
-                  borderColor: selectedJobId === job.id ? "#8cb7af" : undefined,
-                }}
+                className={`job-item job-select ${selectedJobId === job.id ? "selected" : ""}`}
                 onClick={() => setSelectedJobId(job.id)}
               >
                 <h3>{job.title}</h3>
@@ -135,7 +136,7 @@ export default function ClientDashboardPage() {
                 </div>
               </button>
             ))}
-            {!jobs.length ? <p style={{ color: "var(--muted)" }}>No jobs created yet.</p> : null}
+            {!jobs.length ? <p className="muted-text">No jobs created yet.</p> : null}
           </div>
         </section>
 
@@ -144,28 +145,33 @@ export default function ClientDashboardPage() {
           <div className="job-list">
             {proposals.map((proposal) => (
               <article key={proposal.id} className="job-item">
-                <div className="row-actions" style={{ justifyContent: "space-between" }}>
+                <div className="row-actions row-between">
                   <strong>#{proposal.id}</strong>
                   <span className="pill">{proposal.status}</span>
                 </div>
-                <p style={{ color: "var(--muted)", margin: "0.45rem 0" }}>{proposal.coverLetter}</p>
+                <p className="muted-text" style={{ margin: "0.45rem 0" }}>
+                  {proposal.coverLetter}
+                </p>
                 <p>
                   Price: {formatMoney(proposal.price)} | Duration: {proposal.durationDays} days
                 </p>
-                <p style={{ color: "var(--muted)" }}>Freelancer: {proposal.freelancerEmail}</p>
+                <p className="muted-text">Freelancer: {proposal.freelancerEmail}</p>
                 {proposal.status === "PENDING" ? (
-                  <div className="row-actions" style={{ marginTop: "0.55rem" }}>
-                    <button type="button" className="btn-primary" onClick={() => void handleAcceptProposal(proposal.id)}>
-                      Accept proposal
+                  <div className="row-actions mt-sm">
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={() => void handleAcceptProposal(proposal.id)}
+                      disabled={acceptingProposalId !== null}
+                    >
+                      {acceptingProposalId === proposal.id ? "Accepting..." : "Accept proposal"}
                     </button>
                   </div>
                 ) : null}
               </article>
             ))}
-            {selectedJobId && !proposals.length ? (
-              <p style={{ color: "var(--muted)" }}>No proposals for this job yet.</p>
-            ) : null}
-            {!selectedJobId ? <p style={{ color: "var(--muted)" }}>Select a job to view proposals.</p> : null}
+            {selectedJobId && !proposals.length ? <p className="muted-text">No proposals for this job yet.</p> : null}
+            {!selectedJobId ? <p className="muted-text">Select a job to view proposals.</p> : null}
           </div>
         </section>
       </div>
@@ -175,16 +181,16 @@ export default function ClientDashboardPage() {
         <div className="job-list">
           {contracts.map((contract) => (
             <article key={contract.id} className="job-item">
-              <div className="row-actions" style={{ justifyContent: "space-between" }}>
+              <div className="row-actions row-between">
                 <strong>Contract #{contract.id}</strong>
                 <span className="pill">{contract.status}</span>
               </div>
               <p>Job #{contract.jobId}</p>
-              <p style={{ color: "var(--muted)" }}>Updated: {formatDate(contract.updatedAt)}</p>
-              <p style={{ color: "var(--muted)" }}>Milestones: {contract.milestones?.length ?? 0}</p>
+              <p className="muted-text">Updated: {formatDate(contract.updatedAt)}</p>
+              <p className="muted-text">Milestones: {contract.milestones?.length ?? 0}</p>
             </article>
           ))}
-          {!contracts.length ? <p style={{ color: "var(--muted)" }}>No contracts yet.</p> : null}
+          {!contracts.length ? <p className="muted-text">No contracts yet.</p> : null}
         </div>
       </section>
     </div>
