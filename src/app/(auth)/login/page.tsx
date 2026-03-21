@@ -1,124 +1,101 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ApiError } from "@/lib/http-client";
-import { pickApiFieldErrors, type LoginFields, validateLoginInput } from "@/lib/validation";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { ApiError } from "@/lib/http/api-error";
+import { loginSchema } from "@/lib/validation";
+import type { z } from "zod";
+
+type LoginValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { loginWithPassword } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [nextPath, setNextPath] = useState("/jobs");
-  const [pending, setPending] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<LoginFields, string>>>({});
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    const rawNext = new URLSearchParams(window.location.search).get("next");
-    if (rawNext && rawNext.startsWith("/")) {
-      setNextPath(rawNext);
-    }
-  }, []);
+  const nextPath = (() => {
+    const raw = searchParams.get("next");
+    return raw && raw.startsWith("/") ? raw : "/dashboard";
+  })();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const payload = { email: email.trim(), password };
-    const validation = validateLoginInput(payload);
-    if (!validation.ok) {
-      setFieldErrors(validation.fieldErrors);
-      setErrorMessage("Please fix the highlighted fields.");
-      return;
-    }
-
-    setPending(true);
-    setErrorMessage(null);
-    setFieldErrors({});
-
+  const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await loginWithPassword(payload);
+      await loginWithPassword(values);
+      toast.success("Signed in successfully.");
       router.replace(nextPath);
     } catch (error) {
       if (error instanceof ApiError) {
-        const apiFieldErrors = pickApiFieldErrors<LoginFields>(error.fieldErrors, ["email", "password"]);
-        if (Object.keys(apiFieldErrors).length > 0) {
-          setFieldErrors(apiFieldErrors);
+        if (error.fieldErrors) {
+          Object.entries(error.fieldErrors).forEach(([name, message]) => {
+            if (name === "email" || name === "password") {
+              form.setError(name as keyof LoginValues, { type: "server", message });
+            }
+          });
         }
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Unable to login right now.");
+        toast.error(error.message);
+        return;
       }
-    } finally {
-      setPending(false);
+      toast.error("Unable to sign in right now.");
     }
-  };
+  });
 
   return (
-    <div className="auth-shell">
-      <section className="auth-card">
-        <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-subtitle">Sign in to manage jobs, proposals, and contracts.</p>
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+      <Card className="w-full max-w-md border-slate-200/80 bg-white/95 p-6 shadow-xl">
+        <div className="mb-6 space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">SkillBridge</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight">Sign in to your workspace</h1>
+          <p className="text-sm text-slate-600">Use your account to manage jobs, proposals, and contracts.</p>
+        </div>
 
-        <form className="form-grid" onSubmit={handleSubmit}>
-          <label>
-            <div className="field-label">Email</div>
-            <input
-              className="input-field"
+        <form className="space-y-4" onSubmit={onSubmit}>
+          <Field label="Email" error={form.formState.errors.email?.message}>
+            <Input
               type="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                setErrorMessage(null);
-                setFieldErrors((prev) => ({ ...prev, email: undefined }));
-              }}
-              placeholder="you@example.com"
               autoComplete="email"
-              maxLength={254}
-              aria-invalid={Boolean(fieldErrors.email)}
-              required
+              placeholder="you@example.com"
+              {...form.register("email")}
             />
-            {fieldErrors.email ? <p className="error-text">{fieldErrors.email}</p> : null}
-          </label>
+          </Field>
 
-          <label>
-            <div className="field-label">Password</div>
-            <input
-              className="input-field"
+          <Field label="Password" error={form.formState.errors.password?.message}>
+            <Input
               type="password"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                setErrorMessage(null);
-                setFieldErrors((prev) => ({ ...prev, password: undefined }));
-              }}
-              placeholder="Enter your password"
-              minLength={8}
               autoComplete="current-password"
-              aria-invalid={Boolean(fieldErrors.password)}
-              required
+              placeholder="At least 8 characters"
+              {...form.register("password")}
             />
-            {fieldErrors.password ? <p className="error-text">{fieldErrors.password}</p> : null}
-          </label>
+          </Field>
 
-          <button className="btn-primary" type="submit" disabled={pending}>
-            {pending ? "Signing in..." : "Sign in"}
-          </button>
+          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+          </Button>
         </form>
 
-        {errorMessage ? <p className="error-text">{errorMessage}</p> : null}
-
-        <p className="auth-footer">
-          New here? <Link href="/register">Create an account</Link>
+        <p className="mt-4 text-sm text-slate-600">
+          New here?{" "}
+          <Link href="/register" className="font-semibold text-blue-700 hover:text-blue-800">
+            Create an account
+          </Link>
         </p>
-      </section>
+      </Card>
     </div>
   );
 }

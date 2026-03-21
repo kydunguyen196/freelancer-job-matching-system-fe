@@ -1,424 +1,256 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Upload } from "lucide-react";
+import { toast } from "sonner";
 
 import { useAuth } from "@/components/providers/auth-provider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ErrorState } from "@/components/ui/error-state";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { LoadingBlock } from "@/components/ui/loading-block";
+import { Textarea } from "@/components/ui/textarea";
 import { getMyProfile, updateMyProfile, uploadMyResume } from "@/lib/api";
-import { ApiError } from "@/lib/http-client";
-import type { UpdateProfileRequest, UserProfileResponse } from "@/lib/types";
+import { ApiError } from "@/lib/http/api-error";
+import { profileClientSchema, profileFreelancerSchema } from "@/lib/validation";
+import type { UpdateProfileRequest } from "@/lib/types";
+import type { z } from "zod";
 
-type ProfileField =
-  | "contactEmail"
-  | "phoneNumber"
-  | "address"
-  | "skills"
-  | "hourlyRate"
-  | "overview"
-  | "companyName"
-  | "companyAddress";
+type FreelancerFormValues = z.input<typeof profileFreelancerSchema>;
+type FreelancerValues = z.output<typeof profileFreelancerSchema>;
+type ClientFormValues = z.input<typeof profileClientSchema>;
+type ClientValues = z.output<typeof profileClientSchema>;
 
-const allowedFieldKeys: ProfileField[] = [
-  "contactEmail",
-  "phoneNumber",
-  "address",
-  "skills",
-  "hourlyRate",
-  "overview",
-  "companyName",
-  "companyAddress",
-];
+function splitSkills(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
-type ProfileFormState = {
-  contactEmail: string;
-  phoneNumber: string;
-  address: string;
-  skills: string;
-  hourlyRate: string;
-  overview: string;
-  companyName: string;
-  companyAddress: string;
-};
-
-const emptyForm: ProfileFormState = {
-  contactEmail: "",
-  phoneNumber: "",
-  address: "",
-  skills: "",
-  hourlyRate: "",
-  overview: "",
-  companyName: "",
-  companyAddress: "",
-};
-
-const maxResumeFileSizeBytes = 5 * 1024 * 1024;
-
-function toOptionalText(value: string): string | null {
-  const normalized = value.trim();
+function toOptionalText(value: string | undefined) {
+  const normalized = (value ?? "").trim();
   return normalized ? normalized : null;
 }
 
-function splitSkills(value: string): string[] {
-  return Array.from(
-    new Map(
-      value
-        .split(",")
-        .map((skill) => skill.trim())
-        .filter(Boolean)
-        .map((skill) => [skill.toLowerCase(), skill] as const)
-    ).values()
-  );
-}
-
-function mapProfileFieldErrors(fieldErrors: Record<string, string> | undefined) {
-  if (!fieldErrors) {
-    return {};
-  }
-  const allowed = new Set(allowedFieldKeys);
-  return Object.entries(fieldErrors).reduce<Partial<Record<ProfileField, string>>>((acc, [key, value]) => {
-    if (allowed.has(key as ProfileField) && value) {
-      acc[key as ProfileField] = value;
-    }
-    return acc;
-  }, {});
-}
-
 export default function ProfilePage() {
+  const queryClient = useQueryClient();
   const { session } = useAuth();
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+
+  const profileQuery = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: getMyProfile,
+  });
+
+  const freelancerForm = useForm<FreelancerFormValues, undefined, FreelancerValues>({
+    resolver: zodResolver(profileFreelancerSchema),
+    defaultValues: {
+      contactEmail: "",
+      phoneNumber: "",
+      address: "",
+      skillsRaw: "",
+      hourlyRate: "",
+      overview: "",
+    },
+  });
+
+  const clientForm = useForm<ClientFormValues, undefined, ClientValues>({
+    resolver: zodResolver(profileClientSchema),
+    defaultValues: {
+      contactEmail: "",
+      phoneNumber: "",
+      companyName: "",
+      companyAddress: "",
+    },
+  });
+
+  useEffect(() => {
+    const profile = profileQuery.data;
+    if (!profile) {
+      return;
+    }
+    freelancerForm.reset({
+      contactEmail: profile.contactEmail ?? "",
+      phoneNumber: profile.phoneNumber ?? "",
+      address: profile.address ?? "",
+      skillsRaw: profile.skills?.join(", ") ?? "",
+      hourlyRate: profile.hourlyRate ?? "",
+      overview: profile.overview ?? "",
+    });
+    clientForm.reset({
+      contactEmail: profile.contactEmail ?? "",
+      phoneNumber: profile.phoneNumber ?? "",
+      companyName: profile.companyName ?? "",
+      companyAddress: profile.companyAddress ?? "",
+    });
+  }, [profileQuery.data, freelancerForm, clientForm]);
+
+  const updateMutation = useMutation({
+    mutationFn: (payload: UpdateProfileRequest) => updateMyProfile(payload),
+    onSuccess: () => {
+      toast.success("Profile updated.");
+      void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.message : "Could not update profile.");
+    },
+  });
+
+  const uploadResumeMutation = useMutation({
+    mutationFn: (file: File) => uploadMyResume(file),
+    onSuccess: () => {
+      toast.success("CV uploaded successfully.");
+      setResumeFile(null);
+      void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.message : "Could not upload CV.");
+    },
+  });
+
   const isFreelancer = session?.role === "FREELANCER";
   const isClient = session?.role === "CLIENT";
 
-  const [profile, setProfile] = useState<UserProfileResponse | null>(null);
-  const [form, setForm] = useState<ProfileFormState>(emptyForm);
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [uploadingResume, setUploadingResume] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<ProfileField, string>>>({});
-
-  const hydrateForm = useCallback((data: UserProfileResponse) => {
-    setForm({
-      contactEmail: data.contactEmail ?? "",
-      phoneNumber: data.phoneNumber ?? "",
-      address: data.address ?? "",
-      skills: data.skills?.join(", ") ?? "",
-      hourlyRate: data.hourlyRate?.toString() ?? "",
-      overview: data.overview ?? "",
-      companyName: data.companyName ?? "",
-      companyAddress: data.companyAddress ?? "",
-    });
-  }, []);
-
-  const refreshProfile = useCallback(async () => {
-    setLoading(true);
-    setErrorMessage(null);
-    try {
-      const data = await getMyProfile();
-      setProfile(data);
-      hydrateForm(data);
-    } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Could not load profile.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [hydrateForm]);
-
-  useEffect(() => {
-    void refreshProfile();
-  }, [refreshProfile]);
-
-  const roleLabel = useMemo(() => (isFreelancer ? "Freelancer" : isClient ? "Client" : "Account"), [isClient, isFreelancer]);
-
-  const handleSaveProfile = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSuccessMessage(null);
-    setErrorMessage(null);
-    setFieldErrors({});
-
-    const nextFieldErrors: Partial<Record<ProfileField, string>> = {};
-    let parsedHourlyRate: number | null = null;
-    if (isFreelancer && form.hourlyRate.trim()) {
-      const numericHourlyRate = Number(form.hourlyRate.trim());
-      if (!Number.isFinite(numericHourlyRate) || numericHourlyRate <= 0) {
-        nextFieldErrors.hourlyRate = "Hourly rate must be a positive number.";
-      } else {
-        parsedHourlyRate = numericHourlyRate;
-      }
-    }
-
-    if (Object.keys(nextFieldErrors).length > 0) {
-      setFieldErrors(nextFieldErrors);
-      setErrorMessage("Please fix the highlighted fields.");
-      return;
-    }
-
-    const payload: UpdateProfileRequest = isFreelancer
-      ? {
-          contactEmail: toOptionalText(form.contactEmail),
-          phoneNumber: toOptionalText(form.phoneNumber),
-          address: toOptionalText(form.address),
-          skills: splitSkills(form.skills),
-          hourlyRate: parsedHourlyRate,
-          overview: toOptionalText(form.overview),
-        }
-      : {
-          contactEmail: toOptionalText(form.contactEmail),
-          phoneNumber: toOptionalText(form.phoneNumber),
-          companyName: toOptionalText(form.companyName),
-          companyAddress: toOptionalText(form.companyAddress),
-        };
-
-    setSaving(true);
-    try {
-      const updated = await updateMyProfile(payload);
-      setProfile(updated);
-      hydrateForm(updated);
-      setSuccessMessage("Profile updated.");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        const apiFieldErrors = mapProfileFieldErrors(error.fieldErrors);
-        if (Object.keys(apiFieldErrors).length > 0) {
-          setFieldErrors(apiFieldErrors);
-        }
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Could not update profile.");
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleUploadResume = async () => {
-    if (!resumeFile) {
-      setErrorMessage("Please choose a CV file first.");
-      return;
-    }
-    const normalizedName = resumeFile.name.toLowerCase();
-    const hasAllowedExtension =
-      normalizedName.endsWith(".pdf") || normalizedName.endsWith(".doc") || normalizedName.endsWith(".docx");
-    if (!hasAllowedExtension) {
-      setErrorMessage("CV must be in PDF, DOC, or DOCX format.");
-      return;
-    }
-    if (resumeFile.size > maxResumeFileSizeBytes) {
-      setErrorMessage("CV file must be 5MB or smaller.");
-      return;
-    }
-
-    setUploadingResume(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-    try {
-      const updated = await uploadMyResume(resumeFile);
-      setProfile(updated);
-      setResumeFile(null);
-      setSuccessMessage("CV uploaded.");
-    } catch (error) {
-      if (error instanceof ApiError) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Could not upload CV.");
-      }
-    } finally {
-      setUploadingResume(false);
-    }
-  };
-
   if (!isFreelancer && !isClient) {
+    return <ErrorState message="Profile page is available only for CLIENT or FREELANCER accounts." />;
+  }
+
+  if (profileQuery.isLoading) {
+    return <LoadingBlock label="Loading profile..." />;
+  }
+
+  if (profileQuery.isError || !profileQuery.data) {
     return (
-      <section className="surface-card">
-        <h1 className="section-title">Profile</h1>
-        <p className="error-text">This page is available only for CLIENT or FREELANCER accounts.</p>
-      </section>
+      <ErrorState
+        message={profileQuery.error instanceof ApiError ? profileQuery.error.message : "Could not load profile."}
+        onRetry={() => void profileQuery.refetch()}
+      />
     );
   }
 
+  const profile = profileQuery.data;
+
   return (
-    <div className="surface-grid">
-      <section className="surface-card">
-        <h1 className="section-title">Edit Profile</h1>
-        <div className="row-actions">
-          <span className="pill">{roleLabel}</span>
-          <button type="button" className="btn-secondary" onClick={() => void refreshProfile()} disabled={loading || saving}>
-            {loading ? "Refreshing..." : "Refresh profile"}
-          </button>
+    <div className="space-y-4">
+      <Card className="border-slate-200 bg-white/95">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">Profile</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <Badge>{profile.role}</Badge>
+          <Badge>{profile.email}</Badge>
         </div>
-        <p className="muted-text mt-sm mb-0">Account email: {profile?.email ?? session?.email ?? "-"}</p>
-        {errorMessage ? <p className="error-text">{errorMessage}</p> : null}
-        {successMessage ? <p className="success-text">{successMessage}</p> : null}
-      </section>
-
-      <section className="surface-card">
-        <form className="form-grid" onSubmit={handleSaveProfile}>
-          <label>
-            <div className="field-label">Contact email</div>
-            <input
-              className="input-field"
-              type="email"
-              maxLength={255}
-              value={form.contactEmail}
-              onChange={(event) => {
-                setForm((prev) => ({ ...prev, contactEmail: event.target.value }));
-                setFieldErrors((prev) => ({ ...prev, contactEmail: undefined }));
-              }}
-              aria-invalid={Boolean(fieldErrors.contactEmail)}
-              placeholder={profile?.email ?? "your@email.com"}
-            />
-            {fieldErrors.contactEmail ? <p className="error-text">{fieldErrors.contactEmail}</p> : null}
-          </label>
-
-          <label>
-            <div className="field-label">{isFreelancer ? "Phone number" : "Company phone number"}</div>
-            <input
-              className="input-field"
-              maxLength={32}
-              value={form.phoneNumber}
-              onChange={(event) => {
-                setForm((prev) => ({ ...prev, phoneNumber: event.target.value }));
-                setFieldErrors((prev) => ({ ...prev, phoneNumber: undefined }));
-              }}
-              aria-invalid={Boolean(fieldErrors.phoneNumber)}
-              placeholder="+84 912 345 678"
-            />
-            {fieldErrors.phoneNumber ? <p className="error-text">{fieldErrors.phoneNumber}</p> : null}
-          </label>
-
-          {isFreelancer ? (
-            <>
-              <label>
-                <div className="field-label">Address</div>
-                <input
-                  className="input-field"
-                  maxLength={255}
-                  value={form.address}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, address: event.target.value }));
-                    setFieldErrors((prev) => ({ ...prev, address: undefined }));
-                  }}
-                  aria-invalid={Boolean(fieldErrors.address)}
-                  placeholder="City, district, country..."
-                />
-                {fieldErrors.address ? <p className="error-text">{fieldErrors.address}</p> : null}
-              </label>
-
-              <label>
-                <div className="field-label">Skills (comma separated)</div>
-                <input
-                  className="input-field"
-                  maxLength={500}
-                  value={form.skills}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, skills: event.target.value }));
-                    setFieldErrors((prev) => ({ ...prev, skills: undefined }));
-                  }}
-                  aria-invalid={Boolean(fieldErrors.skills)}
-                  placeholder="react, spring boot, figma"
-                />
-                {fieldErrors.skills ? <p className="error-text">{fieldErrors.skills}</p> : null}
-              </label>
-
-              <label>
-                <div className="field-label">Hourly rate (USD)</div>
-                <input
-                  className="input-field"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={form.hourlyRate}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, hourlyRate: event.target.value }));
-                    setFieldErrors((prev) => ({ ...prev, hourlyRate: undefined }));
-                  }}
-                  aria-invalid={Boolean(fieldErrors.hourlyRate)}
-                  placeholder="35"
-                />
-                {fieldErrors.hourlyRate ? <p className="error-text">{fieldErrors.hourlyRate}</p> : null}
-              </label>
-
-              <label>
-                <div className="field-label">Overview</div>
-                <textarea
-                  className="textarea-field"
-                  maxLength={4000}
-                  value={form.overview}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, overview: event.target.value }));
-                    setFieldErrors((prev) => ({ ...prev, overview: undefined }));
-                  }}
-                  aria-invalid={Boolean(fieldErrors.overview)}
-                  placeholder="Short bio about your experience and services"
-                />
-                {fieldErrors.overview ? <p className="error-text">{fieldErrors.overview}</p> : null}
-              </label>
-            </>
-          ) : (
-            <>
-              <label>
-                <div className="field-label">Company name</div>
-                <input
-                  className="input-field"
-                  maxLength={255}
-                  value={form.companyName}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, companyName: event.target.value }));
-                    setFieldErrors((prev) => ({ ...prev, companyName: undefined }));
-                  }}
-                  aria-invalid={Boolean(fieldErrors.companyName)}
-                  placeholder="SkillBridge Studio"
-                />
-                {fieldErrors.companyName ? <p className="error-text">{fieldErrors.companyName}</p> : null}
-              </label>
-
-              <label>
-                <div className="field-label">Company address</div>
-                <input
-                  className="input-field"
-                  maxLength={255}
-                  value={form.companyAddress}
-                  onChange={(event) => {
-                    setForm((prev) => ({ ...prev, companyAddress: event.target.value }));
-                    setFieldErrors((prev) => ({ ...prev, companyAddress: undefined }));
-                  }}
-                  aria-invalid={Boolean(fieldErrors.companyAddress)}
-                  placeholder="Building, street, city"
-                />
-                {fieldErrors.companyAddress ? <p className="error-text">{fieldErrors.companyAddress}</p> : null}
-              </label>
-            </>
-          )}
-
-          <button className="btn-primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save profile"}
-          </button>
-        </form>
-      </section>
+      </Card>
 
       {isFreelancer ? (
-        <section className="surface-card">
-          <h2 className="section-title">CV Upload</h2>
-          <p className="muted-text">Accepted formats: PDF, DOC, DOCX (max 5MB).</p>
-          <div className="row-actions mt-sm">
-            <input
-              className="input-field"
+        <Card className="border-slate-200 bg-white/95">
+          <form
+            className="space-y-4"
+            onSubmit={freelancerForm.handleSubmit(async (values) => {
+              await updateMutation.mutateAsync({
+                contactEmail: toOptionalText(values.contactEmail),
+                phoneNumber: toOptionalText(values.phoneNumber),
+                address: toOptionalText(values.address),
+                skills: splitSkills(values.skillsRaw),
+                hourlyRate: values.hourlyRate === "" ? null : Number(values.hourlyRate),
+                overview: toOptionalText(values.overview),
+              });
+            })}
+          >
+            <h2 className="text-lg font-semibold">Freelancer Profile</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Contact email" error={freelancerForm.formState.errors.contactEmail?.message}>
+                <Input type="email" {...freelancerForm.register("contactEmail")} />
+              </Field>
+              <Field label="Phone number" error={freelancerForm.formState.errors.phoneNumber?.message}>
+                <Input {...freelancerForm.register("phoneNumber")} />
+              </Field>
+              <Field label="Address" error={freelancerForm.formState.errors.address?.message}>
+                <Input {...freelancerForm.register("address")} />
+              </Field>
+              <Field label="Hourly rate (USD)" error={freelancerForm.formState.errors.hourlyRate?.message}>
+                <Input type="number" min={1} step="0.01" {...freelancerForm.register("hourlyRate")} />
+              </Field>
+            </div>
+            <Field label="Skills (comma separated)" error={freelancerForm.formState.errors.skillsRaw?.message}>
+              <Input placeholder="react, spring, sql, aws" {...freelancerForm.register("skillsRaw")} />
+            </Field>
+            <Field label="Overview" error={freelancerForm.formState.errors.overview?.message}>
+              <Textarea rows={6} {...freelancerForm.register("overview")} />
+            </Field>
+            <Button type="submit" disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? "Saving..." : "Save profile"}
+            </Button>
+          </form>
+        </Card>
+      ) : null}
+
+      {isClient ? (
+        <Card className="border-slate-200 bg-white/95">
+          <form
+            className="space-y-4"
+            onSubmit={clientForm.handleSubmit(async (values) => {
+              await updateMutation.mutateAsync({
+                contactEmail: toOptionalText(values.contactEmail),
+                phoneNumber: toOptionalText(values.phoneNumber),
+                companyName: toOptionalText(values.companyName),
+                companyAddress: toOptionalText(values.companyAddress),
+              });
+            })}
+          >
+            <h2 className="text-lg font-semibold">Client Company Profile</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Contact email" error={clientForm.formState.errors.contactEmail?.message}>
+                <Input type="email" {...clientForm.register("contactEmail")} />
+              </Field>
+              <Field label="Phone number" error={clientForm.formState.errors.phoneNumber?.message}>
+                <Input {...clientForm.register("phoneNumber")} />
+              </Field>
+              <Field label="Company name" error={clientForm.formState.errors.companyName?.message}>
+                <Input {...clientForm.register("companyName")} />
+              </Field>
+              <Field label="Company address" error={clientForm.formState.errors.companyAddress?.message}>
+                <Input {...clientForm.register("companyAddress")} />
+              </Field>
+            </div>
+            <Button type="submit" disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? "Saving..." : "Save profile"}
+            </Button>
+          </form>
+        </Card>
+      ) : null}
+
+      {isFreelancer ? (
+        <Card className="border-slate-200 bg-white/95">
+          <h2 className="mb-2 text-lg font-semibold">CV / Resume</h2>
+          <p className="mb-3 text-sm text-slate-600">Accepted formats: PDF, DOC, DOCX. File size limit depends on backend config.</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Input
               type="file"
+              className="max-w-md"
               accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               onChange={(event) => setResumeFile(event.target.files?.[0] ?? null)}
-              disabled={uploadingResume}
             />
-            <button type="button" className="btn-secondary" onClick={() => void handleUploadResume()} disabled={uploadingResume}>
-              {uploadingResume ? "Uploading..." : "Upload CV"}
-            </button>
+            <Button
+              variant="secondary"
+              disabled={!resumeFile || uploadResumeMutation.isPending}
+              onClick={() => {
+                if (resumeFile) {
+                  uploadResumeMutation.mutate(resumeFile);
+                }
+              }}
+            >
+              <Upload className="h-4 w-4" />
+              {uploadResumeMutation.isPending ? "Uploading..." : "Upload CV"}
+            </Button>
           </div>
-          <p className="muted-text mt-sm mb-0">Current CV: {profile?.resumeFileName ?? "Not uploaded yet"}</p>
-        </section>
+          <p className="mt-3 text-sm text-slate-600">Current file: {profile.resumeFileName ?? "Not uploaded"}</p>
+        </Card>
       ) : null}
     </div>
   );

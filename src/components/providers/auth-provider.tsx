@@ -1,9 +1,8 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 
-import { login, register } from "@/lib/api";
-import { clearAuthSession, getAuthSession, persistAuthSession, toAuthSession } from "@/lib/auth-storage";
+import { useAuthStore } from "@/store/auth-store";
 import type { AuthSession, LoginRequest, RegisterRequest } from "@/lib/types";
 
 type AuthContextValue = {
@@ -12,54 +11,45 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   loginWithPassword: (payload: LoginRequest) => Promise<AuthSession>;
   registerAccount: (payload: RegisterRequest) => Promise<AuthSession>;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<AuthSession | null>(null);
-  const subscribe = useCallback(() => () => {}, []);
+  const session = useAuthStore((state) => state.session);
+  const ready = useAuthStore((state) => state.ready);
+  const bootstrap = useAuthStore((state) => state.bootstrap);
+  const setSession = useAuthStore((state) => state.setSession);
+  const loginWithPassword = useAuthStore((state) => state.loginWithPassword);
+  const registerAccount = useAuthStore((state) => state.registerAccount);
+  const logout = useAuthStore((state) => state.logout);
 
-  const ready = useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false
-  );
+  useEffect(() => {
+    void bootstrap();
+  }, [bootstrap]);
 
-  const activeSession = ready ? (session ?? getAuthSession()) : null;
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      setSession(null);
+    };
 
-  const loginWithPassword = useCallback(async (payload: LoginRequest) => {
-    const response = await login(payload);
-    const nextSession = toAuthSession(response);
-    persistAuthSession(nextSession);
-    setSession(nextSession);
-    return nextSession;
-  }, []);
-
-  const registerAccount = useCallback(async (payload: RegisterRequest) => {
-    const response = await register(payload);
-    const nextSession = toAuthSession(response);
-    persistAuthSession(nextSession);
-    setSession(nextSession);
-    return nextSession;
-  }, []);
-
-  const logout = useCallback(() => {
-    clearAuthSession();
-    setSession(null);
-  }, []);
+    window.addEventListener("skillbridge:auth-expired", handleAuthExpired);
+    return () => {
+      window.removeEventListener("skillbridge:auth-expired", handleAuthExpired);
+    };
+  }, [setSession]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       ready,
-      session: activeSession,
-      isAuthenticated: Boolean(activeSession?.accessToken),
+      session,
+      isAuthenticated: Boolean(session?.userId),
       loginWithPassword,
       registerAccount,
       logout,
     }),
-    [ready, activeSession, loginWithPassword, registerAccount, logout]
+    [ready, session, loginWithPassword, registerAccount, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

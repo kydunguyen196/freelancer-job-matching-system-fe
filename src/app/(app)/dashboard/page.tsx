@@ -20,8 +20,8 @@ export default function DashboardRedirectPage() {
   }, [session, router]);
 
   return (
-    <section className="surface-card">
-      <h1 className="section-title">Redirecting dashboard...</h1>
+    <section className="rounded-2xl border border-slate-200 bg-white/90 p-6">
+      <h1 className="font-display text-xl font-semibold">Redirecting dashboard...</h1>
     </section>
   );
 }

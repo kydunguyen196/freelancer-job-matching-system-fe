@@ -11,7 +11,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { ready, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (ready && !isAuthenticated) {
+    if (!ready) {
+      return;
+    }
+
+    if (!isAuthenticated) {
       const destination = pathname ? `?next=${encodeURIComponent(pathname)}` : "";
       router.replace(`/login${destination}`);
     }
@@ -19,9 +23,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (!ready || !isAuthenticated) {
     return (
-      <div className="loading-wrap">
-        <div className="loading-dot" />
-        <p className="loading-text">Securing your workspace...</p>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="space-y-3 text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-slate-300 border-t-slate-900" />
+          <p className="text-sm text-slate-600">Securing your workspace...</p>
+        </div>
       </div>
     );
   }

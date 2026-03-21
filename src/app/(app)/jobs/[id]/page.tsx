@@ -1,258 +1,307 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CalendarClock, FileText, MapPin, Wallet } from "lucide-react";
+import { toast } from "sonner";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { createProposal, getJobById } from "@/lib/api";
-import { formatDate, formatMoney } from "@/lib/format";
-import { ApiError } from "@/lib/http-client";
-import type { JobResponse } from "@/lib/types";
-import { pickApiFieldErrors, type ProposalFields, validateProposalInput } from "@/lib/validation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { LoadingBlock } from "@/components/ui/loading-block";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  closeJob,
+  createProposal,
+  followCompany,
+  getJobById,
+  saveJob,
+  unfollowCompany,
+  unsaveJob,
+  updateJobStatus,
+  uploadProposalCv,
+} from "@/lib/api";
+import { formatDateTime, formatMoney } from "@/lib/format";
+import { ApiError } from "@/lib/http/api-error";
+import { proposalSchema } from "@/lib/validation";
+import type { z } from "zod";
 
-type ProposalFormState = {
-  coverLetter: string;
-  price: string;
-  durationDays: string;
-};
-
-const defaultProposalForm: ProposalFormState = {
-  coverLetter: "",
-  price: "",
-  durationDays: "",
-};
+type ProposalFormValues = z.input<typeof proposalSchema>;
+type ProposalValues = z.output<typeof proposalSchema>;
 
 export default function JobDetailPage() {
   const params = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
+  const { session } = useAuth();
+  const [cvFile, setCvFile] = useState<File | null>(null);
+
   const jobId = Number(params.id);
 
-  const { session } = useAuth();
-  const isFreelancer = session?.role === "FREELANCER";
-  const isClientOwner = session?.role === "CLIENT";
+  const jobQuery = useQuery({
+    queryKey: ["job-detail", jobId],
+    queryFn: () => getJobById(jobId),
+    enabled: Number.isFinite(jobId) && jobId > 0,
+  });
 
-  const [job, setJob] = useState<JobResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const proposalForm = useForm<ProposalFormValues, undefined, ProposalValues>({
+    resolver: zodResolver(proposalSchema),
+    defaultValues: {
+      coverLetter: "",
+      price: 100,
+      durationDays: 7,
+    },
+  });
 
-  const [proposalForm, setProposalForm] = useState<ProposalFormState>(defaultProposalForm);
-  const [applying, setApplying] = useState(false);
-  const [applyError, setApplyError] = useState<string | null>(null);
-  const [applySuccess, setApplySuccess] = useState<string | null>(null);
-  const [applyFieldErrors, setApplyFieldErrors] = useState<Partial<Record<ProposalFields, string>>>({});
-
-  useEffect(() => {
-    if (!Number.isFinite(jobId) || jobId < 1) {
-      setErrorMessage("Invalid job id.");
-      return;
-    }
-
-    let cancelled = false;
-    const loadJob = async () => {
-      setLoading(true);
-      setErrorMessage(null);
-      try {
-        const data = await getJobById(jobId);
-        if (!cancelled) {
-          setJob(data);
+  const createProposalMutation = useMutation({
+    mutationFn: async (values: ProposalValues) =>
+      createProposal({
+        jobId,
+        coverLetter: values.coverLetter,
+        price: values.price,
+        durationDays: values.durationDays,
+      }),
+    onSuccess: async (proposal) => {
+      if (cvFile) {
+        try {
+          await uploadProposalCv(proposal.id, cvFile);
+          toast.success("Proposal submitted with CV.");
+        } catch (error) {
+          toast.warning("Proposal submitted but CV upload failed.");
+          console.error("Upload CV error after proposal create", error);
         }
-      } catch (error) {
-        if (!cancelled) {
-          setErrorMessage(error instanceof ApiError ? error.message : "Could not load job details.");
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadJob();
-    return () => {
-      cancelled = true;
-    };
-  }, [jobId]);
-
-  const canApply = useMemo(() => isFreelancer && job?.status === "OPEN", [isFreelancer, job]);
-
-  const handleApply = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!job) {
-      return;
-    }
-
-    setApplySuccess(null);
-    setApplyError(null);
-
-    const validation = validateProposalInput(proposalForm);
-    if (!validation.ok) {
-      setApplyFieldErrors(validation.fieldErrors);
-      setApplyError("Please fix the highlighted fields.");
-      return;
-    }
-
-    setApplying(true);
-    setApplyFieldErrors({});
-    try {
-      await createProposal({
-        jobId: job.id,
-        coverLetter: proposalForm.coverLetter.trim(),
-        price: Number(proposalForm.price),
-        durationDays: Number(proposalForm.durationDays),
-      });
-      setApplySuccess("Proposal submitted.");
-      setProposalForm(defaultProposalForm);
-      setApplyFieldErrors({});
-    } catch (error) {
-      if (error instanceof ApiError) {
-        const apiFieldErrors = pickApiFieldErrors<ProposalFields>(
-          error.fieldErrors,
-          ["coverLetter", "price", "durationDays"]
-        );
-        if (Object.keys(apiFieldErrors).length > 0) {
-          setApplyFieldErrors(apiFieldErrors);
-        }
-        setApplyError(error.message);
       } else {
-        setApplyError("Could not submit proposal.");
+        toast.success("Proposal submitted.");
       }
-    } finally {
-      setApplying(false);
-    }
-  };
+      proposalForm.reset();
+      setCvFile(null);
+      void queryClient.invalidateQueries({ queryKey: ["my-proposals"] });
+    },
+    onError: (error) => {
+      if (error instanceof ApiError) {
+        if (error.fieldErrors) {
+          Object.entries(error.fieldErrors).forEach(([name, message]) => {
+            if (name === "coverLetter" || name === "price" || name === "durationDays") {
+              proposalForm.setError(name as keyof ProposalFormValues, { type: "server", message });
+            }
+          });
+        }
+        toast.error(error.message);
+        return;
+      }
+      toast.error("Could not submit proposal.");
+    },
+  });
 
-  if (loading) {
+  const saveMutation = useMutation({
+    mutationFn: async (saved: boolean) => {
+      if (saved) {
+        await unsaveJob(jobId);
+      } else {
+        await saveJob(jobId);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["job-detail", jobId] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      void queryClient.invalidateQueries({ queryKey: ["saved-jobs"] });
+    },
+  });
+
+  const followMutation = useMutation({
+    mutationFn: async (followed: boolean) => {
+      if (followed) {
+        await unfollowCompany(jobId);
+      } else {
+        await followCompany(jobId);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["job-detail", jobId] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      void queryClient.invalidateQueries({ queryKey: ["followed-companies"] });
+    },
+  });
+
+  const openMutation = useMutation({
+    mutationFn: () => updateJobStatus(jobId, "OPEN"),
+    onSuccess: () => {
+      toast.success("Job is now OPEN.");
+      void queryClient.invalidateQueries({ queryKey: ["job-detail", jobId] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: () => closeJob(jobId),
+    onSuccess: () => {
+      toast.success("Job has been closed.");
+      void queryClient.invalidateQueries({ queryKey: ["job-detail", jobId] });
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+  });
+
+  const job = jobQuery.data;
+  const isClientOwner = useMemo(() => job && session?.role === "CLIENT" && session.userId === job.clientId, [job, session]);
+  const canApply = useMemo(
+    () => job && session?.role === "FREELANCER" && job.status === "OPEN",
+    [job, session?.role]
+  );
+
+  if (!Number.isFinite(jobId) || jobId <= 0) {
+    return <ErrorState message="Invalid job id." />;
+  }
+
+  if (jobQuery.isLoading) {
+    return <LoadingBlock label="Loading job detail..." />;
+  }
+
+  if (jobQuery.isError) {
     return (
-      <section className="surface-card">
-        <h1 className="section-title">Loading job details...</h1>
-      </section>
+      <ErrorState
+        message={jobQuery.error instanceof ApiError ? jobQuery.error.message : "Could not load job detail."}
+        onRetry={() => void jobQuery.refetch()}
+      />
     );
   }
 
-  if (errorMessage || !job) {
-    return (
-      <section className="surface-card">
-        <h1 className="section-title">Job Detail</h1>
-        <p className="error-text">{errorMessage ?? "Job not found."}</p>
-        <Link href="/jobs" className="btn-secondary">
-          Back to jobs
-        </Link>
-      </section>
-    );
+  if (!job) {
+    return <EmptyState title="Job not found" description="This job may have been removed or you do not have access." />;
   }
 
   return (
-    <div className="split-2">
-      <section className="surface-card">
-        <div className="row-actions row-between mb-sm">
-          <h1 className="section-title mb-0">
-            {job.title}
-          </h1>
-          <span className="pill">{job.status}</span>
-        </div>
-        <p style={{ marginBottom: "0.7rem" }}>{job.description}</p>
-        <p style={{ marginBottom: "0.35rem" }}>
-          <strong>Budget:</strong> {formatMoney(job.budgetMin)} - {formatMoney(job.budgetMax)}
-        </p>
-        <p style={{ marginBottom: "0.35rem" }}>
-          <strong>Created:</strong> {formatDate(job.createdAt)}
-        </p>
-        <p style={{ marginBottom: "0.6rem" }}>
-          <strong>Tags:</strong> {job.tags?.length ? job.tags.join(", ") : "No tags"}
-        </p>
-        <div className="row-actions">
-          <Link href="/jobs" className="btn-secondary">
-            Back to jobs
-          </Link>
-          {isClientOwner ? (
-            <Link href="/dashboard/client" className="btn-secondary">
-              Review proposals
+    <div className="space-y-4">
+      <Card className="border-slate-200 bg-white/95">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="font-display text-2xl font-semibold tracking-tight">{job.title}</h1>
+              <Badge>{job.status}</Badge>
+              {job.remote ? <Badge className="bg-emerald-100 text-emerald-800">Remote</Badge> : null}
+            </div>
+            <p className="leading-7 text-slate-700">{job.description}</p>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+              <span className="inline-flex items-center gap-1">
+                <Wallet className="h-4 w-4" />
+                {formatMoney(job.budgetMin)} - {formatMoney(job.budgetMax)}
+              </span>
+              {job.location ? (
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  {job.location}
+                </span>
+              ) : null}
+              <span className="inline-flex items-center gap-1">
+                <CalendarClock className="h-4 w-4" />
+                Posted {formatDateTime(job.createdAt)}
+              </span>
+              {job.companyName ? <span>Company: {job.companyName}</span> : null}
+            </div>
+            {job.tags?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {job.tags.map((tag) => (
+                  <Badge key={`${job.id}-${tag}`} className="bg-slate-100 text-slate-700">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => saveMutation.mutate(job.savedByCurrentUser)}
+              disabled={saveMutation.isPending}
+            >
+              {job.savedByCurrentUser ? "Unsave" : "Save"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => followMutation.mutate(job.companyFollowedByCurrentUser)}
+              disabled={followMutation.isPending}
+            >
+              {job.companyFollowedByCurrentUser ? "Unfollow company" : "Follow company"}
+            </Button>
+            <Link href="/jobs">
+              <Button variant="secondary">Back</Button>
             </Link>
-          ) : (
-            <Link href="/dashboard/freelancer" className="btn-secondary">
-              Freelancer dashboard
-            </Link>
-          )}
+          </div>
         </div>
-      </section>
+      </Card>
+
+      {isClientOwner ? (
+        <Card className="border-slate-200 bg-white/95">
+          <h2 className="mb-3 text-lg font-semibold">Client actions</h2>
+          <div className="flex flex-wrap gap-2">
+            {job.status !== "OPEN" ? (
+              <Button onClick={() => openMutation.mutate()} disabled={openMutation.isPending}>
+                Open job
+              </Button>
+            ) : null}
+            {job.status === "OPEN" ? (
+              <Button variant="secondary" onClick={() => closeMutation.mutate()} disabled={closeMutation.isPending}>
+                Close job
+              </Button>
+            ) : null}
+            <Link href="/dashboard/client">
+              <Button variant="secondary">Manage proposals</Button>
+            </Link>
+          </div>
+        </Card>
+      ) : null}
 
       {canApply ? (
-        <section className="surface-card">
-          <h2 className="section-title">Apply to this job</h2>
-          <form className="form-grid" onSubmit={handleApply}>
-            <label>
-              <div className="field-label">Cover letter</div>
-              <textarea
-                className="textarea-field"
-                value={proposalForm.coverLetter}
-                onChange={(event) => {
-                  setProposalForm((prev) => ({ ...prev, coverLetter: event.target.value }));
-                  setApplyError(null);
-                  setApplyFieldErrors((prev) => ({ ...prev, coverLetter: undefined }));
-                }}
-                minLength={40}
-                maxLength={4000}
-                aria-invalid={Boolean(applyFieldErrors.coverLetter)}
-                required
-              />
-              {applyFieldErrors.coverLetter ? <p className="error-text">{applyFieldErrors.coverLetter}</p> : null}
-            </label>
-            <div className="row-actions">
-              <label style={{ flex: 1 }}>
-                <div className="field-label">Price (USD)</div>
-                <input
-                  className="input-field"
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  value={proposalForm.price}
-                  onChange={(event) => {
-                    setProposalForm((prev) => ({ ...prev, price: event.target.value }));
-                    setApplyError(null);
-                    setApplyFieldErrors((prev) => ({ ...prev, price: undefined }));
-                  }}
-                  inputMode="decimal"
-                  aria-invalid={Boolean(applyFieldErrors.price)}
-                  required
-                />
-                {applyFieldErrors.price ? <p className="error-text">{applyFieldErrors.price}</p> : null}
-              </label>
-              <label style={{ flex: 1 }}>
-                <div className="field-label">Duration (days)</div>
-                <input
-                  className="input-field"
-                  type="number"
-                  min="1"
-                  max="365"
-                  value={proposalForm.durationDays}
-                  onChange={(event) => {
-                    setProposalForm((prev) => ({ ...prev, durationDays: event.target.value }));
-                    setApplyError(null);
-                    setApplyFieldErrors((prev) => ({ ...prev, durationDays: undefined }));
-                  }}
-                  inputMode="numeric"
-                  aria-invalid={Boolean(applyFieldErrors.durationDays)}
-                  required
-                />
-                {applyFieldErrors.durationDays ? <p className="error-text">{applyFieldErrors.durationDays}</p> : null}
-              </label>
+        <Card className="border-slate-200 bg-white/95">
+          <h2 className="mb-3 text-lg font-semibold">Submit proposal</h2>
+          <form
+            className="space-y-4"
+            onSubmit={proposalForm.handleSubmit(async (values) => {
+              await createProposalMutation.mutateAsync(values);
+            })}
+          >
+            <Field label="Cover letter" error={proposalForm.formState.errors.coverLetter?.message}>
+              <Textarea rows={8} placeholder="Describe why you are a strong fit for this role..." {...proposalForm.register("coverLetter")} />
+            </Field>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Proposed Price (USD)" error={proposalForm.formState.errors.price?.message}>
+                <Input type="number" min={1} step="0.01" {...proposalForm.register("price")} />
+              </Field>
+              <Field label="Duration (days)" error={proposalForm.formState.errors.durationDays?.message}>
+                <Input type="number" min={1} max={365} {...proposalForm.register("durationDays")} />
+              </Field>
             </div>
-            <button className="btn-primary" type="submit" disabled={applying}>
-              {applying ? "Submitting..." : "Submit proposal"}
-            </button>
+
+            <Field label="CV file (optional)">
+              <Input
+                type="file"
+                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={(event) => setCvFile(event.target.files?.[0] ?? null)}
+              />
+            </Field>
+
+            <Button type="submit" disabled={createProposalMutation.isPending}>
+              <FileText className="h-4 w-4" />
+              {createProposalMutation.isPending ? "Submitting..." : "Submit proposal"}
+            </Button>
           </form>
-          {applyError ? <p className="error-text">{applyError}</p> : null}
-          {applySuccess ? <p className="success-text">{applySuccess}</p> : null}
-        </section>
+        </Card>
       ) : (
-        <section className="surface-card">
-          <h2 className="section-title">Proposal panel</h2>
-          <p className="muted-text">
+        <Card className="border-slate-200 bg-white/95">
+          <p className="text-sm text-slate-600">
             {job.status !== "OPEN"
-              ? "This job is closed, so new proposals are disabled."
-              : "Only freelancer accounts can apply to jobs."}
+              ? "This job is not OPEN, so new proposals are disabled."
+              : "Only freelancer accounts can submit proposals."}
           </p>
-        </section>
+        </Card>
       )}
     </div>
   );

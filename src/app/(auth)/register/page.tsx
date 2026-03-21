@@ -2,153 +2,112 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { ApiError } from "@/lib/http-client";
-import type { UserRole } from "@/lib/types";
-import { pickApiFieldErrors, type RegisterFields, validateRegisterInput } from "@/lib/validation";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { ApiError } from "@/lib/http/api-error";
+import { registerSchema } from "@/lib/validation";
+import type { z } from "zod";
+
+type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const router = useRouter();
   const { registerAccount } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("FREELANCER");
-  const [pending, setPending] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<RegisterFields, string>>>({});
+  const form = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "FREELANCER",
+    },
+  });
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const payload = { email: email.trim(), password, confirmPassword, role };
-    const validation = validateRegisterInput(payload);
-    if (!validation.ok) {
-      setFieldErrors(validation.fieldErrors);
-      setErrorMessage("Please fix the highlighted fields.");
-      return;
-    }
-
-    setPending(true);
-    setErrorMessage(null);
-    setFieldErrors({});
-
+  const onSubmit = form.handleSubmit(async (values) => {
     try {
-      await registerAccount({ email: payload.email, password: payload.password, role });
-      router.replace("/jobs");
+      await registerAccount({
+        email: values.email,
+        password: values.password,
+        role: values.role,
+      });
+      toast.success("Account created.");
+      router.replace("/dashboard");
     } catch (error) {
       if (error instanceof ApiError) {
-        const apiFieldErrors = pickApiFieldErrors<RegisterFields>(error.fieldErrors, ["email", "password", "role"]);
-        if (Object.keys(apiFieldErrors).length > 0) {
-          setFieldErrors(apiFieldErrors);
+        if (error.fieldErrors) {
+          Object.entries(error.fieldErrors).forEach(([name, message]) => {
+            if (name === "email" || name === "password" || name === "role") {
+              form.setError(name as keyof RegisterValues, { type: "server", message });
+            }
+          });
         }
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Unable to register right now.");
+        toast.error(error.message);
+        return;
       }
-    } finally {
-      setPending(false);
+      toast.error("Unable to register right now.");
     }
-  };
+  });
 
   return (
-    <div className="auth-shell">
-      <section className="auth-card">
-        <h1 className="auth-title">Create your SkillBridge account</h1>
-        <p className="auth-subtitle">Choose your role and start collaborating with confidence.</p>
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+      <Card className="w-full max-w-md border-slate-200/80 bg-white/95 p-6 shadow-xl">
+        <div className="mb-6 space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">SkillBridge</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight">Create your account</h1>
+          <p className="text-sm text-slate-600">Start as freelancer or client and access full workflow.</p>
+        </div>
 
-        <form className="form-grid" onSubmit={handleSubmit}>
-          <label>
-            <div className="field-label">Email</div>
-            <input
-              className="input-field"
-              type="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                setErrorMessage(null);
-                setFieldErrors((prev) => ({ ...prev, email: undefined }));
-              }}
-              placeholder="you@example.com"
-              autoComplete="email"
-              maxLength={254}
-              aria-invalid={Boolean(fieldErrors.email)}
-              required
-            />
-            {fieldErrors.email ? <p className="error-text">{fieldErrors.email}</p> : null}
-          </label>
+        <form className="space-y-4" onSubmit={onSubmit}>
+          <Field label="Email" error={form.formState.errors.email?.message}>
+            <Input type="email" autoComplete="email" placeholder="you@example.com" {...form.register("email")} />
+          </Field>
 
-          <label>
-            <div className="field-label">Password</div>
-            <input
-              className="input-field"
+          <Field label="Password" error={form.formState.errors.password?.message}>
+            <Input
               type="password"
-              value={password}
-              minLength={8}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                setErrorMessage(null);
-                setFieldErrors((prev) => ({ ...prev, password: undefined }));
-              }}
-              placeholder="At least 8 chars, letters + numbers"
               autoComplete="new-password"
-              aria-invalid={Boolean(fieldErrors.password)}
-              required
+              placeholder="At least 8 characters"
+              {...form.register("password")}
             />
-            {fieldErrors.password ? <p className="error-text">{fieldErrors.password}</p> : null}
-          </label>
+          </Field>
 
-          <label>
-            <div className="field-label">Confirm password</div>
-            <input
-              className="input-field"
+          <Field label="Confirm Password" error={form.formState.errors.confirmPassword?.message}>
+            <Input
               type="password"
-              value={confirmPassword}
-              minLength={8}
-              onChange={(event) => {
-                setConfirmPassword(event.target.value);
-                setErrorMessage(null);
-                setFieldErrors((prev) => ({ ...prev, confirmPassword: undefined }));
-              }}
-              placeholder="Re-enter your password"
               autoComplete="new-password"
-              aria-invalid={Boolean(fieldErrors.confirmPassword)}
-              required
+              placeholder="Repeat your password"
+              {...form.register("confirmPassword")}
             />
-            {fieldErrors.confirmPassword ? <p className="error-text">{fieldErrors.confirmPassword}</p> : null}
-          </label>
+          </Field>
 
-          <label>
-            <div className="field-label">Role</div>
-            <select
-              className="select-field"
-              value={role}
-              onChange={(event) => {
-                setRole(event.target.value as UserRole);
-                setErrorMessage(null);
-                setFieldErrors((prev) => ({ ...prev, role: undefined }));
-              }}
-              aria-invalid={Boolean(fieldErrors.role)}
-            >
+          <Field label="Role" error={form.formState.errors.role?.message}>
+            <Select {...form.register("role")}>
               <option value="FREELANCER">Freelancer</option>
               <option value="CLIENT">Client</option>
-            </select>
-            {fieldErrors.role ? <p className="error-text">{fieldErrors.role}</p> : null}
-          </label>
+            </Select>
+          </Field>
 
-          <button className="btn-primary" type="submit" disabled={pending}>
-            {pending ? "Creating account..." : "Register"}
-          </button>
+          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Creating account..." : "Register"}
+          </Button>
         </form>
 
-        {errorMessage ? <p className="error-text">{errorMessage}</p> : null}
-
-        <p className="auth-footer">
-          Already have an account? <Link href="/login">Sign in</Link>
+        <p className="mt-4 text-sm text-slate-600">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-blue-700 hover:text-blue-800">
+            Sign in
+          </Link>
         </p>
-      </section>
+      </Card>
     </div>
   );
 }

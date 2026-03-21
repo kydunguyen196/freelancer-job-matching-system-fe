@@ -1,279 +1,491 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { BriefcaseBusiness, Filter, Search, Star } from "lucide-react";
+import { toast } from "sonner";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { createJob, listJobs } from "@/lib/api";
-import { formatDate, formatMoney } from "@/lib/format";
-import { ApiError } from "@/lib/http-client";
-import type { CreateJobRequest, JobResponse } from "@/lib/types";
-import { pickApiFieldErrors, toCreateJobPayload, type CreateJobFields, validateCreateJobInput } from "@/lib/validation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { LoadingBlock } from "@/components/ui/loading-block";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  createJob,
+  followCompany,
+  listJobs,
+  saveJob,
+  unfollowCompany,
+  unsaveJob,
+  type JobListFilters,
+} from "@/lib/api";
+import { formatDateTime, formatMoney } from "@/lib/format";
+import { ApiError } from "@/lib/http/api-error";
+import type { CreateJobRequest, EmploymentType, JobSortBy, JobStatus } from "@/lib/types";
+import { createJobSchema } from "@/lib/validation";
+import type { z } from "zod";
 
-type CreateJobForm = {
-  title: string;
-  description: string;
-  budgetMin: string;
-  budgetMax: string;
-  tags: string;
-};
+type CreateJobFormValues = z.input<typeof createJobSchema>;
+type CreateJobValues = z.output<typeof createJobSchema>;
 
-const emptyCreateJobForm: CreateJobForm = {
-  title: "",
-  description: "",
-  budgetMin: "",
-  budgetMax: "",
-  tags: "",
-};
+const employmentTypes: Array<{ label: string; value: EmploymentType }> = [
+  { label: "Full time", value: "FULL_TIME" },
+  { label: "Part time", value: "PART_TIME" },
+  { label: "Contract", value: "CONTRACT" },
+];
+
+function parseNumberOrUndefined(value: string) {
+  const normalized = value.trim();
+  if (!normalized) {
+    return undefined;
+  }
+  const numeric = Number(normalized);
+  return Number.isFinite(numeric) ? numeric : undefined;
+}
+
+function toCreatePayload(values: CreateJobValues): CreateJobRequest {
+  const tags = values.tagsRaw
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return {
+    title: values.title.trim(),
+    description: values.description.trim(),
+    budgetMin: Number(values.budgetMin),
+    budgetMax: Number(values.budgetMax),
+    tags,
+    companyName: values.companyName?.trim() ? values.companyName.trim() : null,
+    location: values.location?.trim() ? values.location.trim() : null,
+    employmentType: values.employmentType ? (values.employmentType as EmploymentType) : null,
+    remote: values.remote,
+    experienceYears:
+      values.experienceYears === null || values.experienceYears === undefined ? null : Number(values.experienceYears),
+    status: values.status as JobStatus,
+    expiresAt: values.expiresAt ? new Date(values.expiresAt).toISOString() : null,
+  };
+}
 
 export default function JobsPage() {
+  const queryClient = useQueryClient();
   const { session } = useAuth();
-
-  const [keyword, setKeyword] = useState("");
-  const [status, setStatus] = useState("");
-  const [jobs, setJobs] = useState<JobResponse[]>([]);
-  const [loadingJobs, setLoadingJobs] = useState(false);
-  const [jobsError, setJobsError] = useState<string | null>(null);
-
-  const [createForm, setCreateForm] = useState<CreateJobForm>(emptyCreateJobForm);
-  const [creatingJob, setCreatingJob] = useState(false);
-  const [createJobError, setCreateJobError] = useState<string | null>(null);
-  const [createJobSuccess, setCreateJobSuccess] = useState<string | null>(null);
-  const [createFieldErrors, setCreateFieldErrors] = useState<Partial<Record<CreateJobFields, string>>>({});
-
   const isClient = session?.role === "CLIENT";
 
-  const refreshJobs = useCallback(async () => {
-    setLoadingJobs(true);
-    setJobsError(null);
-    try {
-      const data = await listJobs({ keyword: keyword.trim() || undefined, status: status || undefined });
-      setJobs(data);
-    } catch (error) {
-      if (error instanceof ApiError) {
-        setJobsError(error.message);
+  const [keyword, setKeyword] = useState("");
+  const [location, setLocation] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [status, setStatus] = useState<JobStatus | "">("");
+  const [employmentType, setEmploymentType] = useState<EmploymentType | "">("");
+  const [remote, setRemote] = useState<"" | "true" | "false">("");
+  const [budgetMin, setBudgetMin] = useState("");
+  const [budgetMax, setBudgetMax] = useState("");
+  const [experienceYearsMin, setExperienceYearsMin] = useState("");
+  const [experienceYearsMax, setExperienceYearsMax] = useState("");
+  const [sortBy, setSortBy] = useState<JobSortBy>("latest");
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(12);
+  const resolvedStatus = status || (session?.role === "FREELANCER" ? "OPEN" : "");
+
+  const filters = useMemo<JobListFilters>(
+    () => ({
+      keyword: keyword.trim() || undefined,
+      location: location.trim() || undefined,
+      companyName: companyName.trim() || undefined,
+      status: (resolvedStatus || undefined) as JobStatus | undefined,
+      employmentType: employmentType || undefined,
+      remote: remote === "" ? undefined : remote === "true",
+      budgetMin: parseNumberOrUndefined(budgetMin),
+      budgetMax: parseNumberOrUndefined(budgetMax),
+      experienceYearsMin: parseNumberOrUndefined(experienceYearsMin),
+      experienceYearsMax: parseNumberOrUndefined(experienceYearsMax),
+      sortBy,
+      page,
+      size,
+    }),
+    [
+      keyword,
+      location,
+      companyName,
+      resolvedStatus,
+      employmentType,
+      remote,
+      budgetMin,
+      budgetMax,
+      experienceYearsMin,
+      experienceYearsMax,
+      sortBy,
+      page,
+      size,
+    ]
+  );
+
+  const jobsQuery = useQuery({
+    queryKey: ["jobs", filters],
+    queryFn: () => listJobs(filters),
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async ({ jobId, saved }: { jobId: number; saved: boolean }) => {
+      if (saved) {
+        await unsaveJob(jobId);
       } else {
-        setJobsError("Could not load jobs.");
+        await saveJob(jobId);
       }
-    } finally {
-      setLoadingJobs(false);
-    }
-  }, [keyword, status]);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      void queryClient.invalidateQueries({ queryKey: ["saved-jobs"] });
+    },
+  });
 
-  useEffect(() => {
-    void refreshJobs();
-  }, [refreshJobs]);
+  const followMutation = useMutation({
+    mutationFn: async ({ jobId, followed }: { jobId: number; followed: boolean }) => {
+      if (followed) {
+        await unfollowCompany(jobId);
+      } else {
+        await followCompany(jobId);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      void queryClient.invalidateQueries({ queryKey: ["followed-companies"] });
+    },
+  });
 
-  const handleCreateJob = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setCreateJobSuccess(null);
-    setCreateJobError(null);
+  const createForm = useForm<CreateJobFormValues, undefined, CreateJobValues>({
+    resolver: zodResolver(createJobSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      budgetMin: 100,
+      budgetMax: 500,
+      tagsRaw: "",
+      companyName: "",
+      location: "",
+      employmentType: "",
+      remote: false,
+      experienceYears: null,
+      status: "DRAFT",
+      expiresAt: "",
+    },
+  });
 
-    const validation = validateCreateJobInput(createForm);
-    if (!validation.ok) {
-      setCreateFieldErrors(validation.fieldErrors);
-      setCreateJobError("Please fix the highlighted fields.");
-      return;
-    }
-
-    setCreatingJob(true);
-    setCreateFieldErrors({});
-
-    const payload: CreateJobRequest = toCreateJobPayload(createForm);
-
-    try {
-      await createJob(payload);
-      setCreateJobSuccess("Job created successfully.");
-      setCreateForm(emptyCreateJobForm);
-      setCreateFieldErrors({});
-      await refreshJobs();
-    } catch (error) {
+  const createJobMutation = useMutation({
+    mutationFn: async (values: CreateJobValues) => createJob(toCreatePayload(values)),
+    onSuccess: () => {
+      toast.success("Job created successfully.");
+      createForm.reset();
+      setPage(0);
+      void queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      void queryClient.invalidateQueries({ queryKey: ["client-jobs"] });
+      void queryClient.invalidateQueries({ queryKey: ["job-dashboard"] });
+    },
+    onError: (error) => {
       if (error instanceof ApiError) {
-        const apiFieldErrors = pickApiFieldErrors<CreateJobFields>(
-          error.fieldErrors,
-          ["title", "description", "budgetMin", "budgetMax", "tags"]
-        );
-        if (Object.keys(apiFieldErrors).length > 0) {
-          setCreateFieldErrors(apiFieldErrors);
+        if (error.fieldErrors) {
+          Object.entries(error.fieldErrors).forEach(([name, message]) => {
+            if (name in createForm.getValues()) {
+              createForm.setError(name as keyof CreateJobFormValues, { type: "server", message });
+            }
+          });
         }
-        setCreateJobError(error.message);
-      } else {
-        setCreateJobError("Could not create job.");
+        toast.error(error.message);
+        return;
       }
-    } finally {
-      setCreatingJob(false);
-    }
-  };
+      toast.error("Could not create job.");
+    },
+  });
 
-  const openJobs = useMemo(() => jobs.filter((job) => job.status === "OPEN").length, [jobs]);
+  const handleSubmitCreateJob = createForm.handleSubmit(async (values) => {
+    await createJobMutation.mutateAsync(values);
+  });
+
+  const jobs = jobsQuery.data?.items ?? [];
+  const meta = jobsQuery.data?.meta;
+
+  const totalOpenJobs = jobs.filter((item) => item.status === "OPEN").length;
 
   return (
-    <div className="surface-grid">
-      <section className="surface-card">
-        <h1 className="section-title">Job Marketplace</h1>
-        <div className="row-actions">
-          <input
-            className="input-field"
-            style={{ maxWidth: 260 }}
-            type="text"
-            value={keyword}
-            onChange={(event) => setKeyword(event.target.value)}
-            placeholder="Search by keyword"
-            maxLength={120}
-          />
-          <select className="select-field" style={{ maxWidth: 170 }} value={status} onChange={(event) => setStatus(event.target.value)}>
-            <option value="">All statuses</option>
-            <option value="OPEN">OPEN</option>
-            <option value="CLOSED">CLOSED</option>
-          </select>
-          <button type="button" className="btn-secondary" onClick={() => void refreshJobs()} disabled={loadingJobs}>
-            {loadingJobs ? "Loading..." : "Refresh"}
-          </button>
-          <span className="pill">{openJobs} open jobs</span>
-        </div>
-        {jobsError ? <p className="error-text">{jobsError}</p> : null}
-      </section>
-
-      <div className="split-2">
-        <section className="surface-card">
-          <h2 className="section-title">Available Jobs</h2>
-          <div className="job-list">
-            {jobs.map((job) => (
-              <article key={job.id} className="job-item">
-                <h3>{job.title}</h3>
-                <p className="muted-text mb-sm">{job.description.slice(0, 180)}</p>
-                <div className="row-actions">
-                  <span className="pill">{job.status}</span>
-                  <span>{formatMoney(job.budgetMin)} - {formatMoney(job.budgetMax)}</span>
-                  <span className="muted-text">Updated {formatDate(job.updatedAt)}</span>
-                </div>
-                <div className="row-actions mt-sm">
-                  <Link className="btn-primary" href={`/jobs/${job.id}`}>
-                    View details
-                  </Link>
-                  {job.tags?.length ? <span className="muted-text">Tags: {job.tags.join(", ")}</span> : null}
-                </div>
-              </article>
-            ))}
-            {!jobs.length && !loadingJobs ? <p className="muted-text">No jobs found with current filter.</p> : null}
+    <div className="space-y-5">
+      <Card className="border-slate-200/90 bg-white/95">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="font-display text-2xl font-semibold tracking-tight">Job Marketplace</h1>
+            <p className="text-sm text-slate-600">Search, filter, sort and manage job opportunities at scale.</p>
           </div>
-        </section>
+          <div className="flex items-center gap-2">
+            <Badge>{totalOpenJobs} open in page</Badge>
+            <Badge>{meta?.totalElements ?? 0} total</Badge>
+          </div>
+        </div>
+      </Card>
 
-        {isClient ? (
-          <section className="surface-card">
-            <h2 className="section-title">Create Job (Client)</h2>
-            <form className="form-grid" onSubmit={handleCreateJob}>
-              <label>
-                <div className="field-label">Title</div>
-                <input
-                  className="input-field"
-                  value={createForm.title}
-                  onChange={(event) => {
-                    setCreateForm((prev) => ({ ...prev, title: event.target.value }));
-                    setCreateJobError(null);
-                    setCreateFieldErrors((prev) => ({ ...prev, title: undefined }));
-                  }}
-                  minLength={6}
-                  maxLength={150}
-                  aria-invalid={Boolean(createFieldErrors.title)}
-                  required
-                />
-                {createFieldErrors.title ? <p className="error-text">{createFieldErrors.title}</p> : null}
+      <Card className="border-slate-200/90 bg-white/95">
+        <div className="mb-3 flex items-center gap-2">
+          <Filter className="h-4 w-4 text-slate-500" />
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-700">Search Filters</h2>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-4">
+          <Input placeholder="Keyword..." value={keyword} onChange={(event) => setKeyword(event.target.value)} />
+          <Input placeholder="Location" value={location} onChange={(event) => setLocation(event.target.value)} />
+          <Input
+            placeholder="Company name"
+            value={companyName}
+            onChange={(event) => setCompanyName(event.target.value)}
+          />
+          <Select value={status} onChange={(event) => setStatus(event.target.value as JobStatus | "")}>
+            <option value="">All statuses</option>
+            <option value="DRAFT">Draft</option>
+            <option value="OPEN">Open</option>
+            <option value="IN_PROGRESS">In progress</option>
+            <option value="CLOSED">Closed</option>
+            <option value="EXPIRED">Expired</option>
+          </Select>
+          <Select value={employmentType} onChange={(event) => setEmploymentType(event.target.value as EmploymentType | "")}>
+            <option value="">All employment types</option>
+            {employmentTypes.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </Select>
+          <Select value={remote} onChange={(event) => setRemote(event.target.value as "" | "true" | "false")}>
+            <option value="">Remote / On-site</option>
+            <option value="true">Remote only</option>
+            <option value="false">On-site only</option>
+          </Select>
+          <Input placeholder="Budget min" value={budgetMin} onChange={(event) => setBudgetMin(event.target.value)} />
+          <Input placeholder="Budget max" value={budgetMax} onChange={(event) => setBudgetMax(event.target.value)} />
+          <Input
+            placeholder="Experience min (years)"
+            value={experienceYearsMin}
+            onChange={(event) => setExperienceYearsMin(event.target.value)}
+          />
+          <Input
+            placeholder="Experience max (years)"
+            value={experienceYearsMax}
+            onChange={(event) => setExperienceYearsMax(event.target.value)}
+          />
+          <Select value={sortBy} onChange={(event) => setSortBy(event.target.value as JobSortBy)}>
+            <option value="latest">Latest</option>
+            <option value="salary_high">Salary high</option>
+            <option value="salary_low">Salary low</option>
+          </Select>
+          <Select
+            value={String(size)}
+            onChange={(event) => {
+              setPage(0);
+              setSize(Number(event.target.value));
+            }}
+          >
+            <option value="12">12 per page</option>
+            <option value="20">20 per page</option>
+            <option value="30">30 per page</option>
+          </Select>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button
+            onClick={() => {
+              setPage(0);
+              void jobsQuery.refetch();
+            }}
+            disabled={jobsQuery.isFetching}
+          >
+            <Search className="h-4 w-4" />
+            Apply search
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setKeyword("");
+              setLocation("");
+              setCompanyName("");
+              setStatus(session?.role === "FREELANCER" ? "OPEN" : "");
+              setEmploymentType("");
+              setRemote("");
+              setBudgetMin("");
+              setBudgetMax("");
+              setExperienceYearsMin("");
+              setExperienceYearsMax("");
+              setSortBy("latest");
+              setPage(0);
+            }}
+          >
+            Reset
+          </Button>
+        </div>
+      </Card>
+
+      {jobsQuery.isLoading ? <LoadingBlock label="Loading jobs..." /> : null}
+      {jobsQuery.isError ? (
+        <ErrorState
+          message={jobsQuery.error instanceof ApiError ? jobsQuery.error.message : "Could not load jobs."}
+          onRetry={() => void jobsQuery.refetch()}
+        />
+      ) : null}
+
+      {!jobsQuery.isLoading && !jobsQuery.isError ? (
+        <div className="space-y-3">
+          {jobs.length ? (
+            jobs.map((job) => (
+              <Card key={job.id} className="border-slate-200 bg-white/95 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-display text-xl font-semibold tracking-tight">{job.title}</h3>
+                      <Badge>{job.status}</Badge>
+                      {job.remote ? <Badge className="bg-emerald-100 text-emerald-800">Remote</Badge> : null}
+                    </div>
+                    <p className="line-clamp-2 text-sm text-slate-600">{job.description}</p>
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                      <span>{formatMoney(job.budgetMin)} - {formatMoney(job.budgetMax)}</span>
+                      {job.companyName ? <span>Company: {job.companyName}</span> : null}
+                      {job.location ? <span>Location: {job.location}</span> : null}
+                      {job.employmentType ? <span>{job.employmentType}</span> : null}
+                      {job.experienceYears !== null ? <span>{job.experienceYears}+ years</span> : null}
+                    </div>
+                    <div className="text-xs text-slate-500">Created {formatDateTime(job.createdAt)}</div>
+                  </div>
+                  <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+                    <Link href={`/jobs/${job.id}`}>
+                      <Button size="sm">View detail</Button>
+                    </Link>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={saveMutation.isPending}
+                      onClick={() => saveMutation.mutate({ jobId: job.id, saved: job.savedByCurrentUser })}
+                    >
+                      <Star className="h-4 w-4" />
+                      {job.savedByCurrentUser ? "Unsave" : "Save"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={followMutation.isPending}
+                      onClick={() => followMutation.mutate({ jobId: job.id, followed: job.companyFollowedByCurrentUser })}
+                    >
+                      {job.companyFollowedByCurrentUser ? "Unfollow company" : "Follow company"}
+                    </Button>
+                  </div>
+                </div>
+                {job.tags?.length ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {job.tags.map((tag) => (
+                      <Badge key={`${job.id}-${tag}`} className="bg-slate-100 text-slate-700">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : null}
+              </Card>
+            ))
+          ) : (
+            <EmptyState title="No jobs found" description="Adjust filters or try broader keywords to see more results." />
+          )}
+        </div>
+      ) : null}
+
+      {meta ? (
+        <Card className="flex flex-wrap items-center justify-between gap-2 border-slate-200 bg-white/95">
+          <p className="text-sm text-slate-600">
+            Page {meta.page + 1} / {Math.max(meta.totalPages, 1)} • {meta.totalElements} items
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+              disabled={meta.page <= 0}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setPage((prev) => Math.min(prev + 1, Math.max(meta.totalPages - 1, 0)))}
+              disabled={meta.page + 1 >= meta.totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </Card>
+      ) : null}
+
+      {isClient ? (
+        <Card className="border-slate-200/90 bg-white/95">
+          <div className="mb-4 flex items-center gap-2">
+            <BriefcaseBusiness className="h-4 w-4 text-slate-500" />
+            <h2 className="text-lg font-semibold">Create New Job</h2>
+          </div>
+          <form className="space-y-4" onSubmit={handleSubmitCreateJob}>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Title" error={createForm.formState.errors.title?.message}>
+                <Input placeholder="Senior React Engineer" {...createForm.register("title")} />
+              </Field>
+              <Field label="Company Name" error={createForm.formState.errors.companyName?.message}>
+                <Input placeholder="SkillBridge Labs" {...createForm.register("companyName")} />
+              </Field>
+              <Field label="Budget Min" error={createForm.formState.errors.budgetMin?.message}>
+                <Input type="number" min={1} step="0.01" {...createForm.register("budgetMin")} />
+              </Field>
+              <Field label="Budget Max" error={createForm.formState.errors.budgetMax?.message}>
+                <Input type="number" min={1} step="0.01" {...createForm.register("budgetMax")} />
+              </Field>
+              <Field label="Location" error={createForm.formState.errors.location?.message}>
+                <Input placeholder="Ho Chi Minh City" {...createForm.register("location")} />
+              </Field>
+              <Field label="Employment Type" error={createForm.formState.errors.employmentType?.message}>
+                <Select {...createForm.register("employmentType")}>
+                  <option value="">Not specified</option>
+                  {employmentTypes.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Experience (Years)" error={createForm.formState.errors.experienceYears?.message}>
+                <Input type="number" min={0} max={60} {...createForm.register("experienceYears")} />
+              </Field>
+              <Field label="Expires At" error={createForm.formState.errors.expiresAt?.message}>
+                <Input type="datetime-local" {...createForm.register("expiresAt")} />
+              </Field>
+              <Field label="Status" error={createForm.formState.errors.status?.message}>
+                <Select {...createForm.register("status")}>
+                  <option value="DRAFT">Draft</option>
+                  <option value="OPEN">Open</option>
+                </Select>
+              </Field>
+              <label className="flex items-end gap-2 pb-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" className="h-4 w-4 rounded border-slate-300" {...createForm.register("remote")} />
+                Remote available
               </label>
-              <label>
-                <div className="field-label">Description</div>
-                <textarea
-                  className="textarea-field"
-                  value={createForm.description}
-                  onChange={(event) => {
-                    setCreateForm((prev) => ({ ...prev, description: event.target.value }));
-                    setCreateJobError(null);
-                    setCreateFieldErrors((prev) => ({ ...prev, description: undefined }));
-                  }}
-                  minLength={24}
-                  maxLength={4000}
-                  aria-invalid={Boolean(createFieldErrors.description)}
-                  required
-                />
-                {createFieldErrors.description ? <p className="error-text">{createFieldErrors.description}</p> : null}
-              </label>
-              <div className="row-actions">
-                <label style={{ flex: 1 }}>
-                  <div className="field-label">Budget Min</div>
-                  <input
-                    className="input-field"
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    value={createForm.budgetMin}
-                    onChange={(event) => {
-                      setCreateForm((prev) => ({ ...prev, budgetMin: event.target.value }));
-                      setCreateJobError(null);
-                      setCreateFieldErrors((prev) => ({ ...prev, budgetMin: undefined }));
-                    }}
-                    inputMode="decimal"
-                    aria-invalid={Boolean(createFieldErrors.budgetMin)}
-                    required
-                  />
-                  {createFieldErrors.budgetMin ? <p className="error-text">{createFieldErrors.budgetMin}</p> : null}
-                </label>
-                <label style={{ flex: 1 }}>
-                  <div className="field-label">Budget Max</div>
-                  <input
-                    className="input-field"
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    value={createForm.budgetMax}
-                    onChange={(event) => {
-                      setCreateForm((prev) => ({ ...prev, budgetMax: event.target.value }));
-                      setCreateJobError(null);
-                      setCreateFieldErrors((prev) => ({ ...prev, budgetMax: undefined }));
-                    }}
-                    inputMode="decimal"
-                    aria-invalid={Boolean(createFieldErrors.budgetMax)}
-                    required
-                  />
-                  {createFieldErrors.budgetMax ? <p className="error-text">{createFieldErrors.budgetMax}</p> : null}
-                </label>
-              </div>
-              <label>
-                <div className="field-label">Tags (comma separated)</div>
-                <input
-                  className="input-field"
-                  value={createForm.tags}
-                  onChange={(event) => {
-                    setCreateForm((prev) => ({ ...prev, tags: event.target.value }));
-                    setCreateJobError(null);
-                    setCreateFieldErrors((prev) => ({ ...prev, tags: undefined }));
-                  }}
-                  maxLength={220}
-                  placeholder="java, spring, api"
-                />
-                {createFieldErrors.tags ? <p className="error-text">{createFieldErrors.tags}</p> : null}
-              </label>
-              <button className="btn-primary" type="submit" disabled={creatingJob}>
-                {creatingJob ? "Creating..." : "Create job"}
-              </button>
-            </form>
-            {createJobError ? <p className="error-text">{createJobError}</p> : null}
-            {createJobSuccess ? <p className="success-text">{createJobSuccess}</p> : null}
-          </section>
-        ) : (
-          <section className="surface-card">
-            <h2 className="section-title">Freelancer Tip</h2>
-            <p className="muted-text">
-              Open a job to send your proposal with price and duration. Accepted proposals automatically create
-              contracts and default milestones.
-            </p>
-            <div className="row-actions mt-sm">
-              <Link href="/dashboard/freelancer" className="btn-secondary">
-                Go to freelancer dashboard
-              </Link>
             </div>
-          </section>
-        )}
-      </div>
+
+            <Field label="Description" error={createForm.formState.errors.description?.message}>
+              <Textarea rows={6} placeholder="Describe scope, requirements, and expected outcomes..." {...createForm.register("description")} />
+            </Field>
+
+            <Field label="Tags (comma separated)" error={createForm.formState.errors.tagsRaw?.message}>
+              <Input placeholder="react, nextjs, api, microservices" {...createForm.register("tagsRaw")} />
+            </Field>
+
+            <Button type="submit" disabled={createJobMutation.isPending}>
+              {createJobMutation.isPending ? "Creating..." : "Create job"}
+            </Button>
+          </form>
+        </Card>
+      ) : null}
     </div>
   );
 }

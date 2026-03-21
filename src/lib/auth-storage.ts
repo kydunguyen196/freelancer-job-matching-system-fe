@@ -1,27 +1,31 @@
-import type { AuthResponse, AuthSession } from "@/lib/types";
+import type { AuthSession } from "@/lib/types";
+import { isClient } from "@/lib/utils";
 
 const AUTH_STORAGE_KEY = "skillbridge.auth.session";
 
-function canUseStorage() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
-}
+let inMemorySession: AuthSession | null = null;
 
-export function toAuthSession(response: AuthResponse): AuthSession {
-  return {
-    ...response,
-    expiresAt: Date.now() + response.expiresIn * 1000,
-  };
-}
+export function persistAuthSession(session: AuthSession | null) {
+  inMemorySession = session;
 
-export function persistAuthSession(session: AuthSession) {
-  if (!canUseStorage()) {
+  if (!isClient()) {
     return;
   }
+
+  if (!session) {
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    return;
+  }
+
   window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
 }
 
 export function getAuthSession(): AuthSession | null {
-  if (!canUseStorage()) {
+  if (inMemorySession) {
+    return inMemorySession;
+  }
+
+  if (!isClient()) {
     return null;
   }
 
@@ -32,31 +36,18 @@ export function getAuthSession(): AuthSession | null {
 
   try {
     const parsed = JSON.parse(raw) as AuthSession;
-    if (!parsed?.accessToken || !parsed?.refreshToken || !parsed?.role || !Number.isFinite(parsed?.expiresAt)) {
-      clearAuthSession();
+    if (!parsed?.userId || !parsed?.email || !parsed?.role) {
+      persistAuthSession(null);
       return null;
     }
-    if (isSessionExpired(parsed)) {
-      clearAuthSession();
-      return null;
-    }
+    inMemorySession = parsed;
     return parsed;
   } catch {
-    clearAuthSession();
+    persistAuthSession(null);
     return null;
   }
 }
 
 export function clearAuthSession() {
-  if (!canUseStorage()) {
-    return;
-  }
-  window.localStorage.removeItem(AUTH_STORAGE_KEY);
-}
-
-export function isSessionExpired(session: AuthSession | null): boolean {
-  if (!session) {
-    return true;
-  }
-  return Date.now() >= session.expiresAt - 10_000;
+  persistAuthSession(null);
 }
