@@ -1,0 +1,1048 @@
+
+> fontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.22.240.1:3000
+
+✓ Starting...
+Creating turbopack project {
+  dir: 'D:\\project\\skillbridge\\freelancer-job-matching-system-fe',
+  testMode: true
+}
+✓ Ready in 2.9s
+⨯ ./src/components/providers/app-providers.tsx:4:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mQueryClientProvider[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { [33mToaster[39m } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./src/components/providers/app-providers.tsx
+    ./src/app/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/query/query-client.ts:1:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mQueryClient[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mexport[39m [36mfunction[39m createQueryClient() {
+ [90m 4 |[39m   [36mreturn[39m [36mnew[39m [33mQueryClient[39m({[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/query/query-client.ts [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/query/query-client.ts [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/http/axios-client.ts:1:1
+Module not found: Can't resolve 'axios'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m axios[33m,[39m { [33mAxiosError[39m[33m,[39m [33mAxiosHeaders[39m[33m,[39m type [33mInternalAxiosRequestConfig[39m } [36mfrom[39m [32m"axios"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mconst[39m [33mAPI_BASE_URL[39m [33m=[39m (process[33m.[39menv[33m.[39m[33mNEXT_PUBLIC_API_BASE_URL[39m [33m?[39m[33m?[39m [32m"http://localhost:8080"[39m)[33m.[39mreplace([35m/\/$/[39m[33m,[39m [32m""[39m)[33m;[39m
+ [90m 4 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/http/axios-client.ts [Client Component Browser]
+    ./src/lib/api.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/http/axios-client.ts [Client Component SSR]
+    ./src/lib/api.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/utils.ts:1:1
+Module not found: Can't resolve 'clsx'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { clsx[33m,[39m type [33mClassValue[39m } [36mfrom[39m [32m"clsx"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { twMerge } [36mfrom[39m [32m"tailwind-merge"[39m[33m;[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m cn([33m...[39minputs[33m:[39m [33mClassValue[39m[]) {[0m
+
+
+
+Import traces:
+  Server Component:
+    ./src/lib/utils.ts
+    ./src/components/ui/card.tsx
+    ./src/app/page.tsx
+
+  Client Component Browser:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/lib/auth-storage.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/lib/auth-storage.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/providers/app-providers.tsx:5:1
+Module not found: Can't resolve 'sonner'
+[0m [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mQueryClientProvider[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mToaster[39m } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { createQueryClient } [36mfrom[39m [32m"@/lib/query/query-client"[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./src/components/providers/app-providers.tsx
+    ./src/app/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/utils.ts:2:1
+Module not found: Can't resolve 'tailwind-merge'
+[0m [90m 1 |[39m [36mimport[39m { clsx[33m,[39m type [33mClassValue[39m } [36mfrom[39m [32m"clsx"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { twMerge } [36mfrom[39m [32m"tailwind-merge"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m cn([33m...[39minputs[33m:[39m [33mClassValue[39m[]) {
+ [90m 5 |[39m   [36mreturn[39m twMerge(clsx(inputs))[33m;[39m[0m
+
+
+
+Import traces:
+  Server Component:
+    ./src/lib/utils.ts
+    ./src/components/ui/card.tsx
+    ./src/app/page.tsx
+
+  Client Component Browser:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/lib/auth-storage.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/lib/auth-storage.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/store/auth-store.ts:3:1
+Module not found: Can't resolve 'zustand'
+[0m [90m 1 |[39m [32m"use client"[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { create } [36mfrom[39m [32m"zustand"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mimport[39m { clearAuthSession[33m,[39m getAuthSession[33m,[39m persistAuthSession } [36mfrom[39m [32m"@/lib/auth-storage"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { getSession[33m,[39m login[33m,[39m logoutSession[33m,[39m register } [36mfrom[39m [32m"@/lib/api"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET / 500 in 2.5s (compile: 2.2s, render: 241ms)
+⨯ ./src/app/(auth)/login/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+[0m [90m 4 |[39m [36mimport[39m { useRouter[33m,[39m useSearchParams } [36mfrom[39m [32m"next/navigation"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 8 |[39m
+ [90m 9 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/providers/app-providers.tsx:4:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mQueryClientProvider[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { [33mToaster[39m } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./src/components/providers/app-providers.tsx
+    ./src/app/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/query/query-client.ts:1:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mQueryClient[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mexport[39m [36mfunction[39m createQueryClient() {
+ [90m 4 |[39m   [36mreturn[39m [36mnew[39m [33mQueryClient[39m({[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/query/query-client.ts [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/query/query-client.ts [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/http/axios-client.ts:1:1
+Module not found: Can't resolve 'axios'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m axios[33m,[39m { [33mAxiosError[39m[33m,[39m [33mAxiosHeaders[39m[33m,[39m type [33mInternalAxiosRequestConfig[39m } [36mfrom[39m [32m"axios"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mconst[39m [33mAPI_BASE_URL[39m [33m=[39m (process[33m.[39menv[33m.[39m[33mNEXT_PUBLIC_API_BASE_URL[39m [33m?[39m[33m?[39m [32m"http://localhost:8080"[39m)[33m.[39mreplace([35m/\/$/[39m[33m,[39m [32m""[39m)[33m;[39m
+ [90m 4 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/http/axios-client.ts [Client Component Browser]
+    ./src/lib/api.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/http/axios-client.ts [Client Component SSR]
+    ./src/lib/api.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/utils.ts:1:1
+Module not found: Can't resolve 'clsx'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { clsx[33m,[39m type [33mClassValue[39m } [36mfrom[39m [32m"clsx"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { twMerge } [36mfrom[39m [32m"tailwind-merge"[39m[33m;[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m cn([33m...[39minputs[33m:[39m [33mClassValue[39m[]) {[0m
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/components/ui/input.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/components/ui/input.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/lib/auth-storage.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/lib/auth-storage.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/app/(auth)/login/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+[0m [90m 3 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { useRouter[33m,[39m useSearchParams } [36mfrom[39m [32m"next/navigation"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 8 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/app/(auth)/login/page.tsx:7:1
+Module not found: Can't resolve 'sonner'
+[0m [90m  5 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m
+ [90m  9 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/providers/app-providers.tsx:5:1
+Module not found: Can't resolve 'sonner'
+[0m [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mQueryClientProvider[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mToaster[39m } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { createQueryClient } [36mfrom[39m [32m"@/lib/query/query-client"[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./src/components/providers/app-providers.tsx
+    ./src/app/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/utils.ts:2:1
+Module not found: Can't resolve 'tailwind-merge'
+[0m [90m 1 |[39m [36mimport[39m { clsx[33m,[39m type [33mClassValue[39m } [36mfrom[39m [32m"clsx"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { twMerge } [36mfrom[39m [32m"tailwind-merge"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m cn([33m...[39minputs[33m:[39m [33mClassValue[39m[]) {
+ [90m 5 |[39m   [36mreturn[39m twMerge(clsx(inputs))[33m;[39m[0m
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/components/ui/input.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Client Component Browser]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/components/ui/input.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Client Component SSR]
+    ./src/app/(auth)/login/page.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/lib/auth-storage.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/lib/auth-storage.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/store/auth-store.ts:3:1
+Module not found: Can't resolve 'zustand'
+[0m [90m 1 |[39m [32m"use client"[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { create } [36mfrom[39m [32m"zustand"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mimport[39m { clearAuthSession[33m,[39m getAuthSession[33m,[39m persistAuthSession } [36mfrom[39m [32m"@/lib/auth-storage"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { getSession[33m,[39m login[33m,[39m logoutSession[33m,[39m register } [36mfrom[39m [32m"@/lib/api"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /login 500 in 2.2s (compile: 2.1s, render: 43ms)
+⨯ ./src/app/(app)/jobs/page.tsx:6:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+[0m [90m 4 |[39m [36mimport[39m { useMemo[33m,[39m useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mBriefcaseBusiness[39m[33m,[39m [33mFilter[39m[33m,[39m [33mSearch[39m[33m,[39m [33mStar[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m 9 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/app/(app)/jobs/page.tsx:7:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m [90m  5 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m { [33mBriefcaseBusiness[39m[33m,[39m [33mFilter[39m[33m,[39m [33mSearch[39m[33m,[39m [33mStar[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m  9 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 10 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/providers/app-providers.tsx:4:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mQueryClientProvider[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { [33mToaster[39m } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./src/components/providers/app-providers.tsx
+    ./src/app/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/top-nav.tsx:7:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m [90m  5 |[39m [36mimport[39m { usePathname[33m,[39m useRouter } [36mfrom[39m [32m"next/navigation"[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { useMemo[33m,[39m useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m
+ [90m  9 |[39m [36mimport[39m { getNavItems } [36mfrom[39m [32m"@/components/layout/nav-config"[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/top-nav.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/top-nav.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/query/query-client.ts:1:1
+Module not found: Can't resolve '@tanstack/react-query'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mQueryClient[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mexport[39m [36mfunction[39m createQueryClient() {
+ [90m 4 |[39m   [36mreturn[39m [36mnew[39m [33mQueryClient[39m({[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/query/query-client.ts [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/query/query-client.ts [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/http/axios-client.ts:1:1
+Module not found: Can't resolve 'axios'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m axios[33m,[39m { [33mAxiosError[39m[33m,[39m [33mAxiosHeaders[39m[33m,[39m type [33mInternalAxiosRequestConfig[39m } [36mfrom[39m [32m"axios"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mconst[39m [33mAPI_BASE_URL[39m [33m=[39m (process[33m.[39menv[33m.[39m[33mNEXT_PUBLIC_API_BASE_URL[39m [33m?[39m[33m?[39m [32m"http://localhost:8080"[39m)[33m.[39mreplace([35m/\/$/[39m[33m,[39m [32m""[39m)[33m;[39m
+ [90m 4 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/http/axios-client.ts [Client Component Browser]
+    ./src/lib/api.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/lib/http/axios-client.ts [Client Component SSR]
+    ./src/lib/api.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/utils.ts:1:1
+Module not found: Can't resolve 'clsx'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { clsx[33m,[39m type [33mClassValue[39m } [36mfrom[39m [32m"clsx"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { twMerge } [36mfrom[39m [32m"tailwind-merge"[39m[33m;[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m cn([33m...[39minputs[33m:[39m [33mClassValue[39m[]) {[0m
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/components/ui/textarea.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/components/ui/textarea.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/components/top-nav.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/components/top-nav.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  #5 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/lib/auth-storage.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  #6 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/lib/auth-storage.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/format.ts:1:1
+Module not found: Can't resolve 'date-fns'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { format[33m,[39m formatDistanceToNowStrict[33m,[39m isValid[33m,[39m parseISO } [36mfrom[39m [32m"date-fns"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mexport[39m [36mfunction[39m formatMoney(value[33m:[39m number [33m|[39m [36mnull[39m [33m|[39m undefined) {
+ [90m 4 |[39m   [36mif[39m (value [33m===[39m [36mnull[39m [33m||[39m value [33m===[39m undefined [33m||[39m [33mNumber[39m[33m.[39misNaN(value)) {[0m
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./src/lib/format.ts [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./src/lib/format.ts [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./src/lib/format.ts [Client Component Browser]
+    ./src/components/top-nav.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./src/lib/format.ts [Client Component SSR]
+    ./src/components/top-nav.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/app/(app)/jobs/page.tsx:8:1
+Module not found: Can't resolve 'lucide-react'
+[0m [90m  6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mBriefcaseBusiness[39m[33m,[39m [33mFilter[39m[33m,[39m [33mSearch[39m[33m,[39m [33mStar[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m 10 |[39m
+ [90m 11 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/top-nav.tsx:4:1
+Module not found: Can't resolve 'lucide-react'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mBell[39m[33m,[39m [33mLogOut[39m[33m,[39m [33mMenu[39m[33m,[39m [33mMoon[39m[33m,[39m [33mRefreshCcw[39m[33m,[39m [33mSun[39m[33m,[39m [33mX[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { usePathname[33m,[39m useRouter } [36mfrom[39m [32m"next/navigation"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { useMemo[33m,[39m useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/top-nav.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/top-nav.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/ui/empty-state.tsx:1:1
+Module not found: Can't resolve 'lucide-react'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mInbox[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mexport[39m [36mfunction[39m [33mEmptyState[39m({ title[33m,[39m description }[33m:[39m { title[33m:[39m string[33m;[39m description[33m:[39m string }) {
+ [90m 4 |[39m   [36mreturn[39m ([0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ui/empty-state.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ui/empty-state.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/ui/error-state.tsx:1:1
+Module not found: Can't resolve 'lucide-react'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mAlertTriangle[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m 4 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ui/error-state.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ui/error-state.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/app/(app)/jobs/page.tsx:5:1
+Module not found: Can't resolve 'react-hook-form'
+[0m [90m 3 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { useMemo[33m,[39m useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { [33mBriefcaseBusiness[39m[33m,[39m [33mFilter[39m[33m,[39m [33mSearch[39m[33m,[39m [33mStar[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/app/(app)/jobs/page.tsx:9:1
+Module not found: Can't resolve 'sonner'
+[0m [90m  7 |[39m [36mimport[39m { useMutation[33m,[39m useQuery[33m,[39m useQueryClient } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+ [90m  8 |[39m [36mimport[39m { [33mBriefcaseBusiness[39m[33m,[39m [33mFilter[39m[33m,[39m [33mSearch[39m[33m,[39m [33mStar[39m } [36mfrom[39m [32m"lucide-react"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  9 |[39m [36mimport[39m { toast } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 10 |[39m
+ [90m 11 |[39m [36mimport[39m { useAuth } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m
+ [90m 12 |[39m [36mimport[39m { [33mBadge[39m } [36mfrom[39m [32m"@/components/ui/badge"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/components/providers/app-providers.tsx:5:1
+Module not found: Can't resolve 'sonner'
+[0m [90m 3 |[39m [36mimport[39m { useState } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { [33mQueryClientProvider[39m } [36mfrom[39m [32m"@tanstack/react-query"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mToaster[39m } [36mfrom[39m [32m"sonner"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mimport[39m { [33mAuthProvider[39m } [36mfrom[39m [32m"@/components/providers/auth-provider"[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { createQueryClient } [36mfrom[39m [32m"@/lib/query/query-client"[39m[33m;[39m[0m
+
+
+
+Import trace:
+  Server Component:
+    ./src/components/providers/app-providers.tsx
+    ./src/app/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/lib/utils.ts:2:1
+Module not found: Can't resolve 'tailwind-merge'
+[0m [90m 1 |[39m [36mimport[39m { clsx[33m,[39m type [33mClassValue[39m } [36mfrom[39m [32m"clsx"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { twMerge } [36mfrom[39m [32m"tailwind-merge"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m cn([33m...[39minputs[33m:[39m [33mClassValue[39m[]) {
+ [90m 5 |[39m   [36mreturn[39m twMerge(clsx(inputs))[33m;[39m[0m
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/components/ui/textarea.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Client Component Browser]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/components/ui/textarea.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Client Component SSR]
+    ./src/app/(app)/jobs/page.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/components/top-nav.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Client Component Browser]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/components/top-nav.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Client Component SSR]
+    ./src/components/app-shell.tsx [Server Component]
+    ./src/app/(app)/layout.tsx [Server Component]
+
+  #5 [Client Component Browser]:
+    ./src/lib/utils.ts [Client Component Browser]
+    ./src/lib/auth-storage.ts [Client Component Browser]
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  #6 [Client Component SSR]:
+    ./src/lib/utils.ts [Client Component SSR]
+    ./src/lib/auth-storage.ts [Client Component SSR]
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./src/store/auth-store.ts:3:1
+Module not found: Can't resolve 'zustand'
+[0m [90m 1 |[39m [32m"use client"[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { create } [36mfrom[39m [32m"zustand"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mimport[39m { clearAuthSession[33m,[39m getAuthSession[33m,[39m persistAuthSession } [36mfrom[39m [32m"@/lib/auth-storage"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { getSession[33m,[39m login[33m,[39m logoutSession[33m,[39m register } [36mfrom[39m [32m"@/lib/api"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/store/auth-store.ts [Client Component Browser]
+    ./src/components/providers/auth-provider.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Client Component Browser]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/store/auth-store.ts [Client Component SSR]
+    ./src/components/providers/auth-provider.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Client Component SSR]
+    ./src/components/providers/app-providers.tsx [Server Component]
+    ./src/app/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /jobs 500 in 1971ms (compile: 1947ms, render: 25ms)
+[?25h

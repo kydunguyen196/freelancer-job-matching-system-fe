@@ -1,0 +1,17 @@
+
+> fontend@0.1.0 dev
+> next dev --port 3001
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://172.22.240.1:3001
+
+✓ Starting...
+Creating turbopack project {
+  dir: 'D:\\project\\skillbridge\\freelancer-job-matching-system-fe',
+  testMode: true
+}
+✓ Ready in 1175ms
+ GET / 200 in 961ms (compile: 711ms, render: 250ms)
+ GET /login 200 in 181ms (compile: 41ms, render: 141ms)
+ GET /jobs 200 in 249ms (compile: 83ms, render: 167ms)
